@@ -70,37 +70,39 @@ class CommonClass {
   }
 
   checkFileType(file, option='thumb') {
-    let type = file.extension
-    type = type.toLowerCase().trim()
-    switch (type) {
-      case ('png'):
-      case ('jpg'):
-      case ('jpeg'):
-      case ('gif'):
-        if (option == 'origin'){
-          return "/api/file/download/"+ file.server_name
-        }
-        //download뒤에 thumb인지 origianl인지 구분 api 만들기
-        return "/api/file/download/thumb" + file.server_name
-      case ('zip'):
-      case ('7z'):
-      case ('tar'):
-        if(option == 'tiles'){
-          return require('@/assets/images/fileIcon/zip-new.png')
-        }else{
-          return require('@/assets/images/fileIcon/zip_icon.png')
-        }
-      case 'pdf':
-        if(option == 'tiles'){
-          return require('@/assets/images/fileIcon/pdf-new.png')
-        }else{
-          return require('@/assets/images/fileIcon/pdf_icon.png')
-        }
-
-      case 'txt':
-        return require('@/assets/images/fileIcon/txt_icon.png')
-      default:
-        return require('@/assets/images/fileIcon/file_icon.png')
+    if(file!==undefined){
+      let type = file.extension
+      type = type.toLowerCase().trim()
+      switch (type) {
+        case ('png'):
+        case ('jpg'):
+        case ('jpeg'):
+        case ('gif'):
+          if (option == 'origin'){
+            return "/api/file/download/"+ file.server_name
+          }
+          //download뒤에 thumb인지 origianl인지 구분 api 만들기
+          return "/api/file/download/thumb" + file.server_name
+        case ('zip'):
+        case ('7z'):
+        case ('tar'):
+          if(option == 'tiles'){
+            return require('@/assets/images/fileIcon/zip-new.png')
+          }else{
+            return require('@/assets/images/fileIcon/zip_icon.png')
+          }
+        case 'pdf':
+          if(option == 'tiles'){
+            return require('@/assets/images/fileIcon/pdf-new.png')
+          }else{
+            return require('@/assets/images/fileIcon/pdf_icon.png')
+          }
+  
+        case 'txt':
+          return require('@/assets/images/fileIcon/txt_icon.png')
+        default:
+          return require('@/assets/images/fileIcon/file_icon.png')
+      }
     }
   }
 }

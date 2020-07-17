@@ -2,7 +2,9 @@ package com.nineone.nocm.controller.api;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -104,7 +106,35 @@ public class FileController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
                 .body(resource);
     }
+    
+    @GetMapping("/loadtxt/{fileName}")
+    public String loadText(@PathVariable(value = "fileName") String fileName){
+    	Resource resource = fileStorageService.loadFileAsResource(fileName);
+    	List<String> content = null;
+    	String lineSeparator = System.getProperty("line.separator");
+		String combinedTxt = "";
+    	try {
+			Path path = Paths.get(resource.getURI());
+			content = Files.readAllLines(path);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		int idx = 0;
+		for(String txt : content) {
+			idx++;
+			if(idx!=content.size()) {
+				combinedTxt += txt +lineSeparator;
+			}else {
+				combinedTxt += txt;
+			}
+		}
+		
+    	return combinedTxt;
+    	
+    }
 
+    
     @PostMapping("/get/files")
     public List<ContentsFile> getChannelFileList(@RequestBody Map<String,Integer> map){
         int channel_id = map.get("channel_id");

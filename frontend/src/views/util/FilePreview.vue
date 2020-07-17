@@ -6,11 +6,11 @@
     z-index="10000"
   >
     <v-progress-circular indeterminate size="64" v-show="!showFile"></v-progress-circular>
-    <v-row justify="center" v-show="showFile">
-      <v-col cols="1" align-self="center" style="margin-top: 10px">
+    <v-row justify="center" v-show="showFile" style="flex-wrap: nowrap;">
+      <div  class="verti-align" style="margin-top: 10px">
         <v-icon v-if="index > 0" large @click="moveFile(--index)">keyboard_arrow_left</v-icon>
-      </v-col>
-      <v-col cols="10">
+      </div>
+      <div >
         <div class="myflex">
           <div style="display:inline-block">
             <v-btn icon @click="fileDownload(selectFile)"><i class="im im-download"></i></v-btn>
@@ -20,33 +20,45 @@
             <v-btn icon @click="hide"><i class="im im-x-mark"></i></v-btn>
           </div>
         </div>
-        <v-img v-if="selectFile!==undefined && selectFile.extension !== 'pdf'"
+        <v-img v-if="isImgFile"
                :src="selectImage(selectFile,'origin')"
                contain
                max-height="60vh" max-width="45vw"
                eager
                @load="showFile = true;"
         ></v-img>
-        <div style="overflow:scroll; width: 100%; height:80vh;" v-else>
+        <div v-if="notPreview" style="margin:15px 0;">
+          <div class="hori-align file-font-h4"><v-icon style="margin-right:5px;">info</v-icon>미리보기가 지원되지 않는 형식입니다.</div>
+        </div>
+        <div style="overflow-y: auto;overflow-x: hidden; width:100%;  height:80vh;" v-if="isPdfFile">
           <pdf
             v-for="page in pages"
             :key="page"
             @progress="loadedRatio = $event"
             :src="pdfSrc"
             :page="page"
-            style="width: 100%;">
+            style="width:100%;"
+            >
           </pdf>
         </div>
-      </v-col>
-      <v-col cols="1" align-self="center" style="margin-top: 10px">
+        <div v-if="isTxtFile" class="txtfile-container">
+            <div class="txtfile-inner">
+              <pre style="color: black;margin: 0px;background-color: white;">{{txtVal}}</pre>  
+            </div>
+        </div>
+      </div>
+      <div class="verti-align" style="margin-top: 10px">
         <v-icon v-if="index < channelFiles.length-1" large @click="moveFile(++index)">keyboard_arrow_right</v-icon>
-      </v-col>
+      </div>
     </v-row>
   </v-overlay>
+  
+  
 </template>
 
 <script>
   import pdf from "vue-pdf";
+  import axios from 'axios'
   import CommonClass from "../../service/common";
 
   export default {
@@ -62,6 +74,39 @@
         pdfSrc: undefined,
         pages: undefined,
         index: 0,
+        txtVal:''
+      }
+    },
+    computed:{
+      notPreview:function(){
+        return !this.isImgFile && !this.isTxtFile && !this.isPdfFile
+      },
+      isTxtFile:function(){
+        if(this.selectFile!==undefined && this.selectFile.extension === 'txt'){
+          // 나중에 api 만들면 아래코드 api 호출 후로 변경해야함
+          //this.showFile=true
+          return true
+        }else{
+          return false
+        }
+      },
+      isImgFile:function(){
+        if(this.selectFile!==undefined){
+          let type = this.selectFile.extension
+          type = type.toLowerCase().trim()
+          switch (type) {
+            case ('png'):
+            case ('jpg'):
+            case ('jpeg'):
+            case ('gif'):
+              return true
+          }
+        }else{
+          return false
+        }
+      },
+      isPdfFile:function(){
+        return this.selectFile!==undefined && this.selectFile.extension === 'pdf'
       }
     },
     methods: {
@@ -81,10 +126,23 @@
         //   }
         // }
       },
+      loadTxt:function(file){
+        axios.get('/api/file/loadtxt/' + file.server_name).then(res=>{
+          this.txtVal = res.data
+          this.showFile=true
+        })
+      },
+
       show: function (file) {
         document.addEventListener('keydown', this.clickEvent)
-        if (file.extension == 'pdf') {
-          this.loadPdfFile(file)
+        switch(file.extension){
+          case ('pdf'):
+            this.loadPdfFile(file) 
+          case ('txt'):
+            this.loadTxt(file)
+        }
+        if(!this.isImgFile && !this.isTxtFile && !this.isPdfFile){
+          this.showFile = true
         }
         this.index = this.channelFiles.findIndex((f) => f.id == file.id)
         this.selectFile = file
@@ -109,6 +167,9 @@
           this.loadPdfFile(this.channelFiles[index])
         }
         this.selectFile = this.channelFiles[index];
+        if(!this.isImgFile && !this.isTxtFile && !this.isPdfFile){
+          this.showFile = true
+        }
       },
       loadPdfFile(file) {
         this.pdfSrc = pdf.createLoadingTask('/api/file/download/' + file.server_name)
