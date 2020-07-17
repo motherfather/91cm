@@ -1,4 +1,4 @@
-import store from '../store'
+import axios from 'axios'
 class CommonClass {
   replacemsg(originContent) {
     if (originContent == null){
@@ -7,8 +7,16 @@ class CommonClass {
     let content = ''
     content = originContent.replace(/&lt;p&gt;/gim, '<p>')
     content = content.replace(/&lt;\/p&gt;/gim, '</p>')
-
     return content
+  }
+
+  formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   }
 
   replaceErrorMsg(originContent) {
@@ -45,39 +53,56 @@ class CommonClass {
     }
   }
 
+  fileDownload(file) {
+    axios.get("/api/file/download/" + file.server_name, {
+      responseType: 'blob'
+    })
+      .then(res => {
+        const url = window.URL.createObjectURL(new Blob([res.data]))
+        const link = document.createElement('a')
+        link.href = url;
+        link.setAttribute('download', file.original_name)
+        document.body.appendChild(link)
+        link.click()
+        link.remove()
+        window.URL.revokeObjectURL(url)
+      })
+  }
+
   checkFileType(file, option='thumb') {
-    let type = file.extension
-    console.log(option)
-    type = type.toLowerCase().trim()
-    switch (type) {
-      case ('png'):
-      case ('jpg'):
-      case ('jpeg'):
-      case ('gif'):
-        if (option == 'origin'){
-          return "/api/file/download/"+ file.server_name
-        }
-        //download뒤에 thumb인지 origianl인지 구분 api 만들기
-        return "/api/file/download/thumb" + file.server_name
-      case ('zip'):
-      case ('7z'):
-      case ('tar'):
-        if(option == 'tiles'){
-          return require('@/assets/images/fileIcon/zip-new.png')
-        }else{
-          return require('@/assets/images/fileIcon/zip_icon.png')
-        }
-      case 'pdf':
-        if(option == 'tiles'){
-          return require('@/assets/images/fileIcon/pdf-new.png')
-        }else{
-          return require('@/assets/images/fileIcon/pdf_icon.png')
-        }
-        
-      case 'txt':
-        return require('@/assets/images/fileIcon/txt_icon.png')
-      default:
-        return require('@/assets/images/fileIcon/file_icon.png')
+    if(file!==undefined){
+      let type = file.extension
+      type = type.toLowerCase().trim()
+      switch (type) {
+        case ('png'):
+        case ('jpg'):
+        case ('jpeg'):
+        case ('gif'):
+          if (option == 'origin'){
+            return "/api/file/download/"+ file.server_name
+          }
+          //download뒤에 thumb인지 origianl인지 구분 api 만들기
+          return "/api/file/download/thumb" + file.server_name
+        case ('zip'):
+        case ('7z'):
+        case ('tar'):
+          if(option == 'tiles'){
+            return require('@/assets/images/fileIcon/zip-new.png')
+          }else{
+            return require('@/assets/images/fileIcon/zip_icon.png')
+          }
+        case 'pdf':
+          if(option == 'tiles'){
+            return require('@/assets/images/fileIcon/pdf-new.png')
+          }else{
+            return require('@/assets/images/fileIcon/pdf_icon.png')
+          }
+  
+        case 'txt':
+          return require('@/assets/images/fileIcon/txt_icon.png')
+        default:
+          return require('@/assets/images/fileIcon/file_icon.png')
+      }
     }
   }
 }

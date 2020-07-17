@@ -54,8 +54,6 @@ const routes = [
     component: Main,
     beforeEnter: async function (to, from, next) {
       await store.dispatch('initCurrentUser')
-      console.log(store.state.currentUser)
-      console.log(store.state.currentUser.roles)
       if (store.state.currentUser.roles.length == 0) {
         next('/signup')
       } else if (store.state.currentUser.roles.length == 1

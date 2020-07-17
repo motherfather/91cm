@@ -60,7 +60,6 @@
   import Calendar from "../views/calendar/Calendar";
   import AdminPage from "../views/admin/AdminPage"
   import VideoChat from "./VideoChat";
-  import channelMixin from "../mixins/channelMixin";
   import FileDrawer from "./FileDrawer";
 
   export default {
@@ -79,7 +78,7 @@
       'Calendar': Calendar,
       'AdminPage': AdminPage,
       'VideoChat': VideoChat,
-      'FileDrawer': FileDrawer
+      'FileDrawer': FileDrawer,
     },
     data() {
       return {
@@ -95,6 +94,7 @@
         AboutChannel.updateLastAccessStatus(this.$store.state.oldComponent, this.$store.state.selectComponent)
         switch (this.$store.state.selectComponent) {
           case 'main':
+            this.$store.commit('setIsVideoMode',false)
             return 'ContentWrapper'
           case 'user':
             return 'UserInfo'
@@ -123,7 +123,6 @@
     deactivated() {
     },
     async created() {
-      //await this.$store.dispatch('userListUpdate')
       const currentChannel = this.$store.state.currentChannel
       if (currentChannel != null) {
         currentChannel.count = 0
