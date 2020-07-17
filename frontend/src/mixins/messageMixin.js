@@ -99,12 +99,10 @@ let messageMixin = {
               if (this.wrapperEl == null) {
                 this.$store.commit('setWrapperEl', document.querySelector('.c-c-wrapper'))
               }
-
               this.wrapperEl.scrollTop = this.wrapperEl.scrollHeight - this.oldScrollHeight
               this.$store.commit('setOldScrollHeight',this.wrapperEl.scrollHeight)
             })
           }
-
           this.isGetMsgForPreview = true
           this.isGetMsgForImgLoad = true
         }
@@ -117,7 +115,7 @@ let messageMixin = {
         target_lang: 'en'
       }).then(res=>{
         let translateText=res.data
-        this.message.content += '\n'+translateText
+        this.message.content += '\n &<hr> \n'+translateText
       }).catch(error =>{
         console.error(error)
       })
@@ -140,6 +138,7 @@ let messageMixin = {
       }
       if (this.translate) {
         await this.translateMessage()
+        this.message.message_type = 'translate'
       }
 
       this.message.channel_id = this.$store.state.currentChannel.id

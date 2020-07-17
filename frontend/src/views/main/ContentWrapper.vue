@@ -3,7 +3,7 @@
     <div class="h-inherit" v-cloak @drop.prevent="dropFile" @dragover.prevent>
       <ul class="c-c-wrapper list-unstyled" @scroll="scrollEvt">
         <div v-for="msg in msgArray" :key="msg.id">
-          <MsgBox v-if="msg.message_type=='message'|| msg.message_type=='file'" :msg="msg"
+          <MsgBox v-if="msg.message_type=='message'|| msg.message_type=='file' || msg.message_type == 'translate'" :msg="msg"
                   :msgPreviewBool="msgPreviewBool" @scrollToEnd="scrollToEnd"
                   @imgLoad="imgLoad"></MsgBox>
           <div v-if="msg.message_type=='action'" class="hori-align">
@@ -139,9 +139,8 @@
     },
     updated() {
       this.scrollToEnd()
-      console.log(this.message.content.length)
     },
-    activated() {
+    activated() {``
       if (this.$store.state.oldComponent != 'main' && this.$store.state.selectComponent == 'main') {
         this.scrollToEnd(true)
       }

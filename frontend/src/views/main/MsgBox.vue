@@ -16,9 +16,10 @@
           </div>
           <!-- 채팅메세지내용 -->
           <div style="display:flex;">
-            <slot name="m-content">
+            <slot name="m-content ">
               <div v-if="checkMsgType" v-html="textbyFilter(msg.content)"
-                   class="mychat-content"></div>
+                   class="mychat-content">
+              </div>
               <div style="display:flex;align-items: flex-end;">
                 <div v-if="checkFileType" class="mychat-content">
                   <b-row>
@@ -102,7 +103,7 @@
         return this.msg.sender == this.currentUser.email
       },
       checkMsgType: function () {
-        return this.msg.message_type == 'message' || this.msg.delete_yn == 'Y'
+        return this.msg.message_type == 'message' || this.msg.delete_yn == 'Y' || this.msg.message_type == 'translate'
       },
       checkFileType: function () {
         return this.msg.message_type == 'file' && this.msg.delete_yn == 'N'
@@ -127,11 +128,16 @@
         const urlRegexp = new RegExp(/(http(s)?:\/\/|www.)([a-z0-9\w]+\.*)+[a-z0-9]{2,4}([\/a-z0-9-%#?&=\w])+(\.[a-z0-9]{2,4}(\?[\/a-z0-9-%#?&=\w]+)*)*/)
         let result = '';
         if (this.$store.state.searchText == '') {
+          if(this.msg.message_type == 'translate'){
+            result+='<small>원본</small>'
+          }
           content.match(tagContentRegexp).forEach(contentItem => {
             if (urlRegexp.test(contentItem)) {
               contentItem = contentItem.replace(htmlTagRegexp, '')
               result += "<p><a style='color: blue' href='" + contentItem + "' target='_blank'>" + contentItem + "</a></p>"
-            } else {
+            } else if(new RegExp(/<p>&nbsp;&&lt;hr&gt;&nbsp;<\/p>/g).test(contentItem)){
+                result += '<hr> <small>번역</small>'
+            }else {
               result += contentItem
             }
           });
