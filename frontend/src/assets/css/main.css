@@ -49,6 +49,13 @@
 .mytextarea-wrapper .active-m{
     color: #FF4848 !important;
 }
+.mytextarea-wrapper .icon-list{
+    position: absolute !important;
+    z-index: 1;
+    bottom: 5px;
+    cursor: pointer;
+    color: #2C3E50;
+}
 .mytextarea-wrapper .my-search{
     position: absolute !important;
     z-index: 1;
@@ -89,13 +96,7 @@
   border: solid 1px #e6e6e6;
   flex-direction: column;
 }
-.myfile-upload{
-    position: absolute !important;
-    z-index: 1;
-    bottom: 5px;
-    right: 10px;
-    cursor: pointer;
-}
+
 .mytextarea-wrapper{
     border: 1px solid #ced4da;
     border-radius: .25rem;
@@ -191,7 +192,7 @@ p.file-name
 .mychat-content > p {
     margin:0px;
     display:flex;
-    /* height: 21px; */
+    /*height: 21px;*/
 }
 
 .my-message{

@@ -28,13 +28,20 @@
         <div class="myflex-column myflex-grow">
           <div style="position: relative;display: flex;">
             <div class="mytextarea-wrapper" v-if="!$store.state.isInviteMode && !$store.state.isSearchMode">
-              <v-icon class="my-mail" v-bind:class="{'active-m': sendMail}" @click="sendMailToggle">mail</v-icon>
-              <v-icon class="my-search" @click="toggleSearchMode">find_in_page</v-icon>
-              <i class="im im-users myfile-upload" style="right: 50px;" @click="inviteToggle"></i>
-              <label for="file-input" style="display: block;margin-bottom: 0;">
-                <i class="im im-cloud-upload myfile-upload"></i>
-              </label>
-              <input id="file-input" type="file" ref="fileInput" multiple @change="attachFile" hidden/>
+              <div>
+                <v-icon class="icon-list" style="right: 130px;" v-bind:class="{'active-m': translate}"
+                        @click="translateToggle">translate
+                </v-icon>
+                <v-icon class="icon-list" style="right: 100px;" v-bind:class="{'active-m': sendMail}"
+                        @click="sendMailToggle">mail
+                </v-icon>
+                <v-icon class="icon-list" style="right: 70px;" @click="toggleSearchMode">find_in_page</v-icon>
+                <i class="icon-list im im-users" style="right: 40px;" @click="inviteToggle"></i>
+                <label for="file-input" style="display: block;margin-bottom: 0;">
+                  <i class="im im-cloud-upload icon-list" style="right: 10px;"></i>
+                </label>
+                <input id="file-input" type="file" ref="fileInput" multiple @change="attachFile" hidden/>
+              </div>
               <b-form-textarea
                 class="mytextarea"
                 autofocus
@@ -119,6 +126,7 @@
         selectedUserEmail: ''
       }
     },
+
     mounted() {
       this.$nextTick(() => {
         this.$store.commit('setWrapperEl', document.querySelector('.c-c-wrapper'))
@@ -131,6 +139,7 @@
     },
     updated() {
       this.scrollToEnd()
+      console.log(this.message.content.length)
     },
     activated() {
       if (this.$store.state.oldComponent != 'main' && this.$store.state.selectComponent == 'main') {
@@ -140,6 +149,12 @@
       this.$store.state.isSearchMode = false
     },
     methods: {
+      translateToggle: function () {
+        this.translate = !this.translate
+        if (this.translate) {
+          this.$_alert('지금부터 보내는 메시지는 번역 내용과 같이 보내집니다.')
+        }
+      },
       imgLoad() {
         // 문제 있으면 아래 코드 지우기..
         this.$store.state.oldScrollHeight = this.$store.state.wrapperEl.scrollHeight
@@ -233,47 +248,52 @@
         this.uploadFile(formData)
 
       },
-      send: async function (e, isSysMsg) {
-        if (e != null) {
-          e.preventDefault()
-        }
-        if (this.message.content == '') {
-          return;
-        }
-        if (isSysMsg) {
-          this.message.sender = null
-        } else {
-          this.message.sender = this.$store.state.currentUser.email
-          this.message.user = this.$store.state.currentUser
-        }
-        this.message.channel_id = this.$store.state.currentChannel.id
-        if (CommonClass.byteLimit(this.stringByteLength)) {
-          if (this.$store.state.stompClient && this.$store.state.stompClient.connected) {
-            this.$store.state.stompClient.send("/pub/chat/message", JSON.stringify(this.message), {})
-            this.message.content = ''
-            this.scrollToEnd(true)
-            if (this.sendMail) {
-              this.$store.state.channelUsers.filter(channelUser => channelUser != this.$store.state.currentUser)
-                .forEach(channelUser => {
-                  this.$http.post('/api/message/send/mail', {
-                    channelName: this.$store.state.currentChannel.name,
-                    fromUser: this.$store.state.currentUser.name,
-                    toUser: channelUser.email
-                  })
-                    .then(res => {
-                      this.sendMail = false
-                    })
-                })
-            }
-          } else {
-            this.message.content = CommonClass.replaceErrorMsg(this.message.content)
-            this.message.content = '<p style="color:red;">메세지 전송에 실패하였습니다.</p>' + this.message.content
-            let errormsg = JSON.parse(JSON.stringify(this.message))
-            this.$store.commit('pushMsg', errormsg)
-            this.message.content = ''
-          }
-        }
-      },
+      // 이제 사용하지 않는 함수 인듯함,
+      // send: async function (e, isSysMsg) {
+      //   try{
+      //     if (e != null) {
+      //       e.preventDefault()
+      //     }
+      //     if (this.message.content == '') {
+      //       return;
+      //     }
+      //     if (isSysMsg) {
+      //       this.message.sender = null
+      //     } else {
+      //       this.message.sender = this.$store.state.currentUser.email
+      //       this.message.user = this.$store.state.currentUser
+      //     }
+      //     this.message.channel_id = this.$store.state.currentChannel.id
+      //     if (CommonClass.byteLimit(this.stringByteLength)) {
+      //       if (this.$store.state.stompClient && this.$store.state.stompClient.connected) {
+      //         this.$store.state.stompClient.send("/pub/chat/message", JSON.stringify(this.message), {})
+      //         this.message.content = ''
+      //         this.scrollToEnd(true)
+      //         if (this.sendMail) {
+      //           this.$store.state.channelUsers.filter(channelUser => channelUser != this.$store.state.currentUser)
+      //             .forEach(channelUser => {
+      //               this.$http.post('/api/message/send/mail', {
+      //                 channelName: this.$store.state.currentChannel.name,
+      //                 fromUser: this.$store.state.currentUser.name,
+      //                 toUser: channelUser.email
+      //               })
+      //                 .then(res => {
+      //                   this.sendMail = false
+      //                 })
+      //             })
+      //         }
+      //       } else {
+      //         this.message.content = CommonClass.replaceErrorMsg(this.message.content)
+      //         this.message.content = '<p style="color:red;">메세지 전송에 실패하였습니다.</p>' + this.message.content
+      //         let errormsg = JSON.parse(JSON.stringify(this.message))
+      //         this.$store.commit('pushMsg', errormsg)
+      //         this.message.content = ''
+      //       }
+      //     }
+      //   }catch (e) {
+      //     console.error(e)
+      //   }
+      // },
       scrollEvt(e) {
         let element = e.target;
         //스크롤이 없을때에도 스크롤 위치가 최상단이기 때문에 스크롤이 있는지 없는지 판단해야한다.
@@ -286,36 +306,6 @@
           this.msgPreviewBool = false
         }
       },
-      // 사용안하는지 확인후 삭제
-      // getMessage: function (wrapperEl) {
-      //   return
-      //   this.cursorPoint.channel_id = this.$store.state.currentChannel.id
-      //   this.$http.post('/api/message/getmsg', JSON.stringify(this.cursorPoint), {
-      //     headers: {
-      //       'Content-Type': 'application/json'
-      //     }
-      //   }).then(res => {
-      //     if (res.data.length == 0) {
-      //       this.cursorPoint.empty = true
-      //     } else {
-      //       this.cursorPoint.first = false
-      //       this.cursorPoint.cursorId = res.data[res.data.length - 1].id
-      //     }
-      //     for (let i = 0; i < res.data.length; i++) {
-      //
-      //       res.data[i].content = CommonClass.replacemsg(res.data[i].content)
-      //     }
-      //     this.$store.commit('setMsgArray', res.data.reverse().concat(this.msgArray))
-      //     if (wrapperEl != null) {
-      //       this.$nextTick(() => {
-      //         wrapperEl.scrollTop = wrapperEl.scrollHeight - this.oldScrollHeight
-      //         this.oldScrollHeight = wrapperEl.scrollHeight
-      //       })
-      //     }
-      //     this.isGetMsgForPreview = true
-      //     this.isGetMsgForImgLoad = true
-      //   })
-      // },
       scrollToEnd(bool) {
         this.$nextTick(() => {
           if (this.firstLoad) {

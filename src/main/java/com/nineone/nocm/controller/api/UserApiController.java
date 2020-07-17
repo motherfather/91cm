@@ -8,8 +8,7 @@ import java.util.Map;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
@@ -29,6 +28,7 @@ import com.nineone.nocm.repository.UserAuthoritiesRepository;
 import com.nineone.nocm.service.UserService;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @RestController
@@ -37,7 +37,7 @@ public class UserApiController {
 
 	@Autowired
 	private WebsocketEventListener websocketEventListener;
-	
+
     @Autowired
     private SimpMessageSendingOperations messagingTemplate;
     @Autowired
@@ -76,8 +76,8 @@ public class UserApiController {
             return false;
         }
     }
-    
-    
+
+
     @PostMapping("/update")
     public boolean userInfoUpdate(@RequestBody User user) {
         if (userService.userinfoUpdate(user)) {
@@ -111,7 +111,7 @@ public class UserApiController {
             return false;
         }
     }
-    
+
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     @Transactional
     public boolean signup(@RequestBody User user, Authentication authentication, HttpSession httpsession) {
@@ -146,7 +146,7 @@ public class UserApiController {
     	}
         return userList;
     }
-    
+
     @RequestMapping(value="/invite/{channel_id}",method=RequestMethod.GET)
     public List<User> getInviteUserList(@PathVariable int channel_id){
     	return userService.getUserListForInvite(channel_id);
