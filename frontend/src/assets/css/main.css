@@ -1,7 +1,19 @@
+.txtfile-inner{
+    max-height: 80vh;
+    max-width: 50vw;
+    display: flex;
+    min-width: 50vw;
+    background: white;
+    min-height: 80vh;
+}
+
+.txtfile-container{
+    overflow: auto;
+}
+
 .file-font-h4{
     font-size: x-large;
 }
-
 
 .rsidebar-padding-right{
  padding-right: 320px !important;
@@ -188,11 +200,21 @@ p.file-name
     justify-content: center;
   }
 
-.mychat-content > p {
+.mychat-content > p,.mychat-content > pre {
     margin:0px;
     display:flex;
     /* height: 21px; */
+    font-family: Roboto,sans-serif;
+    overflow: auto;
+    white-space: pre-wrap;
 }
+pre > p{
+    margin:0px !important;
+}
+pre > samp{
+    font-family: Roboto,sans-serif;
+}
+
 
 .my-message{
     background-color: #BBDEFB!important;
@@ -635,3 +657,11 @@ ul.CTAs a {
       display: none;
   }
 }
+
+@media (max-width:1250px){
+    .txtfile-inner{
+        min-width: 80vw;
+        max-width: 80vw;
+    }
+}
+

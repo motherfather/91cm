@@ -17,8 +17,10 @@
           <!-- 채팅메세지내용 -->
           <div style="display:flex;">
             <slot name="m-content">
-              <div v-if="checkMsgType" v-html="textbyFilter(msg.content)"
-                   class="mychat-content"></div>
+              <div v-if="checkMsgType"
+                   class="mychat-content">
+                   <pre v-html="textbyFilter(msg.content)"></pre>
+              </div>
               <div style="display:flex;align-items: flex-end;">
                 <div v-if="checkFileType" class="mychat-content">
                   <b-row>
@@ -61,8 +63,9 @@
               </a>
               <span style="font-size: 11px; margin:0px 3px; width:53px; ">{{ msg.str_send_date }}</span>
             </div>
-            <div v-if="checkMsgType" v-html="textbyFilter(msg.content)"
-                 class="my-message mychat-content"></div>
+              <div v-if="checkMsgType" class="my-message mychat-content">
+                <pre v-html="textbyFilter(msg.content)"></pre>
+              </div>
             <div v-if="checkFileType" class="my-message mychat-content">
               <b-row>
                 <b-col v-for="(file,index) in msg.files" :key="index">
@@ -122,20 +125,24 @@
         $(".confirmMsgDel").css("visibility", "hidden")
       },
       textbyFilter: function (content) {
-        const tagContentRegexp = new RegExp(/<p(.*?)>(.*?)<\/p>/g);
+        // const tagContentRegexp = new RegExp(/<p(.*?)>(.*?)<\/p>/g);
         const htmlTagRegexp = new RegExp(/(<([^>]+)>)/ig);
-        const urlRegexp = new RegExp(/(http(s)?:\/\/|www.)([a-z0-9\w]+\.*)+[a-z0-9]{2,4}([\/a-z0-9-%#?&=\w])+(\.[a-z0-9]{2,4}(\?[\/a-z0-9-%#?&=\w]+)*)*/)
+        const urlRegexp = /(http(s)?:\/\/|www.)([a-z0-9\w]+\.*)+[a-z0-9]{2,4}([\/a-z0-9-%#?&=\w])+(\.[a-z0-9]{2,4}(\?[\/a-z0-9-%#?&=\w]+)*)*/g
         let result = '';
         if (this.$store.state.searchText == '') {
-          content.match(tagContentRegexp).forEach(contentItem => {
-            if (urlRegexp.test(contentItem)) {
-              contentItem = contentItem.replace(htmlTagRegexp, '')
-              result += "<p><a style='color: blue' href='" + contentItem + "' target='_blank'>" + contentItem + "</a></p>"
-            } else {
-              result += contentItem
-            }
-          });
-          return result
+          let arr = content.match(urlRegexp)
+          if(arr!=null){
+            content = '<samp>' + content + '</samp>'
+            arr.forEach(contentItem => {
+              // 아래 코드 한줄은 어떤 용도인지? 에러떠서 주석
+              // contentItem = contentItem.replace(htmlTagRegexp, '')
+              result = "<a style='color: blue' href='" + contentItem + "' target='_blank'>" + contentItem + "</a>"
+              content = content.replace(contentItem,result)
+            });
+            return content
+          }else{
+            return content
+          }
         }
         return this.$options.filters.highlight(content, this.$store.state.searchText);
       },

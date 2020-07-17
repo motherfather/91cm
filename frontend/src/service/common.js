@@ -1,14 +1,16 @@
 import axios from 'axios'
 class CommonClass {
-  replacemsg(originContent) {
-    if (originContent == null){
-      return
-    }
-    let content = ''
-    content = originContent.replace(/&lt;p&gt;/gim, '<p>')
-    content = content.replace(/&lt;\/p&gt;/gim, '</p>')
-    return content
-  }
+  
+  // p태그 빼면 사용 안하게 될 것
+  // replacemsg(originContent) {
+  //   if (originContent == null){
+  //     return
+  //   }
+  //   let content = ''
+  //   content = originContent.replace(/&lt;p&gt;/gim, '<p>')
+  //   content = content.replace(/&lt;\/p&gt;/gim, '</p>')
+  //   return content
+  // }
 
   formatBytes(bytes, decimals = 2) {
     if (bytes === 0) return '0 Bytes';
@@ -19,23 +21,25 @@ class CommonClass {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   }
 
-  replaceErrorMsg(originContent) {
-    let array = originContent.split("\n")
-    let content = ''
-    for (let i in array) {
-      content += '<p>' + array[i] + '</p>'
-    }
-    return content.replace(/ /gi, '&nbsp;')
-  }
+  // p태그 빼면 사용 안하게 될 것
+  // replaceErrorMsg(originContent) {
+  //   let array = originContent.split("\n")
+  //   let content = ''
+  //   for (let i in array) {
+  //     content += '<p>' + array[i] + '</p>'
+  //   }
+  //   return content.replace(/ /gi, '&nbsp;')
+  // }
 
   replacemsgForPreview(originContent) {
-    let array = originContent.split("&lt;/p&gt;&lt;p&gt;")
+    let array = originContent.split("\n")
     let content = ''
     for (let i in array) {
       content += array[i] + ' '
     }
-    content = content.replace('&lt;/p&gt;', '')
-    content = content.replace('&lt;p&gt;', '')
+    // p태그 빼면 사용 안하게 될 것
+    // content = content.replace('&lt;/p&gt;', '')
+    // content = content.replace('&lt;p&gt;', '')
     return content
   }
 

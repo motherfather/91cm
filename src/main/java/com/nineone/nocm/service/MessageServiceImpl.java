@@ -45,10 +45,17 @@ public class MessageServiceImpl implements MessageService {
     public String replacemsg(String originContent) {
         String[] arr = originContent.split("\n");
         String newMsg = "";
+        String lineSeparator = System.getProperty("line.separator");
+        int idx = 0;
         for (String origin : arr) {
-            newMsg += "<p>" + origin + "</p>";
+        	idx++;
+        	if(idx!=arr.length) {
+        		newMsg += origin + lineSeparator;
+        	}else {
+        		newMsg += origin;
+        	}
         }
-        newMsg = newMsg.replace(" ", "&nbsp;");
+//        newMsg = newMsg.replace(" ", "&nbsp;");
 //    	newMsg = originContent.replace(" ", "&nbsp;");
         return newMsg;
     }
