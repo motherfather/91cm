@@ -41,7 +41,6 @@ let channelMixin = {
       if (data.message === undefined) {
         NotificationClass.sendNotification(this.$store.state.isfocus, data)
         if (data.channel_id == this.$store.state.currentChannel.id && this.enableComponent) {
-          data.content = CommonClass.replacemsg(data.content)
           this.$store.commit('pushMsg', data)
           if (!this.$store.state.isfocus) {
             this.msgCountUpdate(data.channel_id, true)

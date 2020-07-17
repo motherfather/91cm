@@ -200,11 +200,21 @@ p.file-name
     justify-content: center;
   }
 
-.mychat-content > p {
+.mychat-content > p,.mychat-content > pre {
     margin:0px;
     display:flex;
     /* height: 21px; */
+    font-family: Roboto,sans-serif;
+    overflow: auto;
+    white-space: pre-wrap;
 }
+pre > p{
+    margin:0px !important;
+}
+pre > samp{
+    font-family: Roboto,sans-serif;
+}
+
 
 .my-message{
     background-color: #BBDEFB!important;
