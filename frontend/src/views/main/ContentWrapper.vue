@@ -114,9 +114,11 @@
           username: ''
         },
         msgPreviewBool: false,
-        isGetMsgForPreview: false,
-        isGetMsgForImgLoad: false,
-        selectedUserEmail: ''
+        // isGetMsgForPreview: false,
+        // isGetMsgForImgLoad: false,
+        selectedUserEmail: '',
+        scrollPosition:0,
+        isUpScroll: false
       }
     },
     mounted() {
@@ -140,15 +142,16 @@
       this.$store.state.isSearchMode = false
     },
     methods: {
-      imgLoad() {
+      imgLoad(e) {
+        
         // 문제 있으면 아래 코드 지우기..
-        this.$store.state.oldScrollHeight = this.$store.state.wrapperEl.scrollHeight
-        if (!this.msgPreviewBool && !this.isGetMsgForImgLoad) {
+        this.$store.state.oldScrollHeight = this.wrapperEl.scrollHeight
+        
+        // 스크롤을 올리고 있을 때 이미지가 로드되어서 스크롤이 강제로 하단으로 가는 문제를 해결하기 위해 isUpScroll를 사용함.
+        if (!this.msgPreviewBool && this.isGetMsgForImgLoad && !this.isUpScroll) {
           this.scrollToEnd(true)
         }
-        if (this.isGetMsgForImgLoad) {
-          this.isGetMsgForImgLoad = false
-        }
+        
       },
       inviteToggle: function (e) {
         let el = document.querySelector(".menuable__content__active.inviteClass")
@@ -198,6 +201,7 @@
           this.isFileUpload = false
           this.$store.dispatch('loadChannelFiles', this.currentChannel.id)
           this.currentChannel.send('loadChannelFiles|' + this.currentChannel.id)
+          this.scrollToEnd(true)
         }).catch(error => {
           this.isFileUpload = false
           this.progressValue = 0
@@ -233,49 +237,58 @@
         this.uploadFile(formData)
 
       },
-      send: async function (e, isSysMsg) {
-        if (e != null) {
-          e.preventDefault()
-        }
-        if (this.message.content == '') {
-          return;
-        }
-        if (isSysMsg) {
-          this.message.sender = null
-        } else {
-          this.message.sender = this.$store.state.currentUser.email
-          this.message.user = this.$store.state.currentUser
-        }
-        this.message.channel_id = this.$store.state.currentChannel.id
-        if (CommonClass.byteLimit(this.stringByteLength)) {
-          if (this.$store.state.stompClient && this.$store.state.stompClient.connected) {
-            this.$store.state.stompClient.send("/pub/chat/message", JSON.stringify(this.message), {})
-            this.message.content = ''
-            this.scrollToEnd(true)
-            if (this.sendMail) {
-              this.$store.state.channelUsers.filter(channelUser => channelUser != this.$store.state.currentUser)
-                .forEach(channelUser => {
-                  this.$http.post('/api/message/send/mail', {
-                    channelName: this.$store.state.currentChannel.name,
-                    fromUser: this.$store.state.currentUser.name,
-                    toUser: channelUser.email
-                  })
-                    .then(res => {
-                      this.sendMail = false
-                    })
-                })
-            }
-          } else {
-            this.message.content = CommonClass.replaceErrorMsg(this.message.content)
-            this.message.content = '<p style="color:red;">메세지 전송에 실패하였습니다.</p>' + this.message.content
-            let errormsg = JSON.parse(JSON.stringify(this.message))
-            this.$store.commit('pushMsg', errormsg)
-            this.message.content = ''
-          }
-        }
-      },
+      // send: async function (e, isSysMsg) {
+      //   if (e != null) {
+      //     e.preventDefault()
+      //   }
+      //   if (this.message.content == '') {
+      //     return;
+      //   }
+      //   if (isSysMsg) {
+      //     this.message.sender = null
+      //   } else {
+      //     this.message.sender = this.$store.state.currentUser.email
+      //     this.message.user = this.$store.state.currentUser
+      //   }
+      //   this.message.channel_id = this.$store.state.currentChannel.id
+      //   if (CommonClass.byteLimit(this.stringByteLength)) {
+      //     if (this.$store.state.stompClient && this.$store.state.stompClient.connected) {
+      //       this.$store.state.stompClient.send("/pub/chat/message", JSON.stringify(this.message), {})
+      //       this.message.content = ''
+      //       this.scrollToEnd(true)
+      //       if (this.sendMail) {
+      //         this.$store.state.channelUsers.filter(channelUser => channelUser != this.$store.state.currentUser)
+      //           .forEach(channelUser => {
+      //             this.$http.post('/api/message/send/mail', {
+      //               channelName: this.$store.state.currentChannel.name,
+      //               fromUser: this.$store.state.currentUser.name,
+      //               toUser: channelUser.email
+      //             })
+      //               .then(res => {
+      //                 this.sendMail = false
+      //               })
+      //           })
+      //       }
+      //     } else {
+      //       this.message.content = CommonClass.replaceErrorMsg(this.message.content)
+      //       this.message.content = '<p style="color:red;">메세지 전송에 실패하였습니다.</p>' + this.message.content
+      //       let errormsg = JSON.parse(JSON.stringify(this.message))
+      //       this.$store.commit('pushMsg', errormsg)
+      //       this.message.content = ''
+      //     }
+      //   }
+      // },
       scrollEvt(e) {
         let element = e.target;
+
+        // ===== 스크롤업됐는지 확인하는 코드 start ======
+        let currentScrollPosition = e.srcElement.scrollTop;
+        if (currentScrollPosition < this.scrollPosition) {
+            this.isUpScroll = true
+        }
+        this.scrollPosition = currentScrollPosition;
+        //====== end ==================
+
         //스크롤이 없을때에도 스크롤 위치가 최상단이기 때문에 스크롤이 있는지 없는지 판단해야한다.
         if (element.scrollTop <= 0 && element.scrollHeight != element.clientHeight) {
           if (this.$store.state.cursorPoint.empty == false) {
@@ -286,36 +299,6 @@
           this.msgPreviewBool = false
         }
       },
-      // 사용안하는지 확인후 삭제
-      // getMessage: function (wrapperEl) {
-      //   return
-      //   this.cursorPoint.channel_id = this.$store.state.currentChannel.id
-      //   this.$http.post('/api/message/getmsg', JSON.stringify(this.cursorPoint), {
-      //     headers: {
-      //       'Content-Type': 'application/json'
-      //     }
-      //   }).then(res => {
-      //     if (res.data.length == 0) {
-      //       this.cursorPoint.empty = true
-      //     } else {
-      //       this.cursorPoint.first = false
-      //       this.cursorPoint.cursorId = res.data[res.data.length - 1].id
-      //     }
-      //     for (let i = 0; i < res.data.length; i++) {
-      //
-      //       res.data[i].content = CommonClass.replacemsg(res.data[i].content)
-      //     }
-      //     this.$store.commit('setMsgArray', res.data.reverse().concat(this.msgArray))
-      //     if (wrapperEl != null) {
-      //       this.$nextTick(() => {
-      //         wrapperEl.scrollTop = wrapperEl.scrollHeight - this.oldScrollHeight
-      //         this.oldScrollHeight = wrapperEl.scrollHeight
-      //       })
-      //     }
-      //     this.isGetMsgForPreview = true
-      //     this.isGetMsgForImgLoad = true
-      //   })
-      // },
       scrollToEnd(bool) {
         this.$nextTick(() => {
           if (this.firstLoad) {
@@ -357,8 +340,9 @@
       msgArray: function () {
         // 스크롤을 최상단으로 올려 메시지를 가져올 때 실행되는 것을 막기 위한 if문
         if (this.isGetMsgForPreview) {
-          this.isGetMsgForPreview = false
-        } else { //메세지 미리보기(preview) 실행
+           this.$store.commit('setIsGetMsgForPreview',false)
+        } else { 
+          //메세지 미리보기(preview) 실행
           if (this.wrapperEl == null) {
             this.$store.commit('setWrapperEl', document.querySelector('.c-c-wrapper'))
           }

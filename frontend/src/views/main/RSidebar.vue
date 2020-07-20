@@ -63,8 +63,8 @@
                 >
                   <div style="height: 100px; background-color: #E0E0E0;" class="cetered-align">
                     <v-img :src="selectImage(file,'tiles')" style="cursor: pointer;"
-                           :height="selectImage(file).includes('/api/file/download')? none : 25"
-                           :width="selectImage(file).includes('/api/file/download')? none : 25"
+                           :height="selectImage(file).includes('/api/file/download')? 'auto' : 25"
+                           :width="selectImage(file).includes('/api/file/download')? 'auto' : 25"
                            contain></v-img>
                   </div>
                 </v-col>

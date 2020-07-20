@@ -71,6 +71,12 @@ export default {
   },
   setChannelFiles: function(state,payload){
     state.channelFiles = payload
+  },
+  setIsGetMsgForImgLoad:function(state,payload){
+    state.isGetMsgForImgLoad = payload
+  },
+  setIsGetMsgForPreview:function(state,payload){
+    state.isGetMsgForPreview = payload
   }
 
 }

@@ -17,7 +17,9 @@ let commonMixin = {
       channelArr:'getChannelArr',
       firstLoad: 'getFirstLoad',
       message: 'getMessage',
-      channelFiles: 'getChannelFiles'
+      channelFiles: 'getChannelFiles',
+      isGetMsgForImgLoad: 'getIsGetMsgForImgLoad',
+      isGetMsgForPreview: 'getIsGetMsgForPreview',
     })
   },
   methods: {

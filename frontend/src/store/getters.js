@@ -29,5 +29,7 @@ export default {
   getChannelArr:state => state.channelArr,
   getFirstLoad: state => state.firstLoad,
   getMessage: state => state.message,
-  getChannelFiles: state => state.channelFiles
+  getChannelFiles: state => state.channelFiles,
+  getIsGetMsgForImgLoad : state => state.isGetMsgForImgLoad,
+  getIsGetMsgForPreview : state => state.isGetMsgForPreview,
 }

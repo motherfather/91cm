@@ -13,9 +13,9 @@ let messageMixin = {
         content: '',
         username: ''
       },
-      msgPreviewBool: false,
-      isGetMsgForPreview: false,
-      isGetMsgForImgLoad: false,
+      // msgPreviewBool: false,
+      // isGetMsgForPreview: false,
+      // isGetMsgForImgLoad: false,
       selectedUserEmail: '',
     }
   },
@@ -27,7 +27,7 @@ let messageMixin = {
       channelList: 'getChannelList',
       wrapperEl: 'getWrapperEl',
       cursorPoint: 'getCursorPoint',
-      oldScrollHeight: 'getOldScrollHeight'
+      oldScrollHeight: 'getOldScrollHeight',
     })
   },
   methods: {
@@ -80,6 +80,11 @@ let messageMixin = {
           if (res.data.length == 0) {
             this.cursorPoint.empty = true
           } else {
+              if(this.cursorPoint.first){
+                this.$store.commit('setIsGetMsgForImgLoad',true)
+              }else{
+                this.$store.commit('setIsGetMsgForImgLoad',false)
+              }
             this.cursorPoint.first = false
             this.cursorPoint.cursorId = res.data[res.data.length - 1].id
           }
@@ -104,9 +109,8 @@ let messageMixin = {
               this.$store.commit('setOldScrollHeight',this.wrapperEl.scrollHeight)
             })
           }
-
-          this.isGetMsgForPreview = true
-          this.isGetMsgForImgLoad = true
+          
+          this.$store.commit('setIsGetMsgForPreview',true)
         }
       })
     },
