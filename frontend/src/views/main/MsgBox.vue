@@ -26,8 +26,8 @@
                   <b-row>
                     <b-col v-for="(file,index) in msg.files" :key="index">
                       <a @click="fileDownload(file)">
-                        <div class="hori-align">
-                          <b-img :alt="file.original_name" :src="selectImage(file)" @load="$emit('imgLoad')"
+                        <div class="hori-align" >
+                          <b-img :alt="file.original_name" :src="selectImage(file)" @load="$emit('imgLoad',$event)"
                                  style="max-width:100px"></b-img>
                         </div>
                         <p class="file-name"><b>{{file.original_name}}</b></p>
@@ -71,7 +71,7 @@
                 <b-col v-for="(file,index) in msg.files" :key="index">
                   <a @click="fileDownload(file)">
                     <div class="hori-align">
-                      <b-img :alt="file.original_name" :src="selectImage(file)" @load="$emit('imgLoad')"
+                      <b-img :alt="file.original_name" :src="selectImage(file)" @load="$emit('imgLoad',$event)"
                              style="max-width:100px"></b-img>
                     </div>
                     <!-- <b-img thumbnail rounded fluid  alt="이미지를 찾을 수 없습니다."
@@ -132,7 +132,7 @@
         if (this.$store.state.searchText == '') {
           let arr = content.match(urlRegexp)
           if(arr!=null){
-            content = '<samp>' + content + '</samp>'
+            content = '<p>' + content + '</p>'
             arr.forEach(contentItem => {
               // 아래 코드 한줄은 어떤 용도인지? 에러떠서 주석
               // contentItem = contentItem.replace(htmlTagRegexp, '')
