@@ -20,6 +20,9 @@ let commonMixin = {
       channelFiles: 'getChannelFiles',
       isGetMsgForImgLoad: 'getIsGetMsgForImgLoad',
       isGetMsgForPreview: 'getIsGetMsgForPreview',
+      scrollPosition: 'getScrollPosition',
+      isUpScroll: 'getIsUpScroll',
+      fileCursorPoint: 'getFileCursorPoint'
     })
   },
   methods: {

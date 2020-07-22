@@ -29,7 +29,12 @@ export default {
   inviteUserList:[],
   lang:'ko',
   channelFiles: [],
-
+  fileCursorPoint:{
+    channel_id: 0,
+    first: true,
+    cursorId: 0,
+    empty: false
+  },
 
   // ===========================================
   isFileUpload: false,
@@ -56,9 +61,10 @@ export default {
   },
   oldScrollHeight: 0,
   wrapperEl: null,
-  msgPreviewBool: false,
   isGetMsgForPreview: false,
   isGetMsgForImgLoad: false,
   selectedUserEmail: '',
   firstLoad:true,
+  scrollPosition:0,
+  isUpScroll:false
 }

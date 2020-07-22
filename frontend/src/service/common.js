@@ -103,9 +103,17 @@ class CommonClass {
           }
   
         case 'txt':
-          return require('@/assets/images/fileIcon/txt_icon.png')
+          if(option == 'tiles'){
+            return require('@/assets/images/fileIcon/txt-new.png')  
+          }else{
+            return require('@/assets/images/fileIcon/txt_icon.png')
+          }
         default:
-          return require('@/assets/images/fileIcon/file_icon.png')
+          if(option == 'tiles'){
+            return require('@/assets/images/fileIcon/file-new.png')  
+          }else{
+            return require('@/assets/images/fileIcon/file_icon.png')
+          }
       }
     }
   }

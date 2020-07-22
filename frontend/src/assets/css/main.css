@@ -1,3 +1,5 @@
+@import './common.scss';
+
 .txtfile-inner{
     max-height: 80vh;
     max-width: 50vw;
@@ -34,9 +36,6 @@
     order: 1
 }
 
-.myflex{
-    display:flex;
-}
 .msgflex-end{
     justify-content: flex-end;
 }
@@ -181,11 +180,11 @@ p.file-name
     justify-content: flex-end;
   }
 
-  .info-wrapper table,
+  /* .info-wrapper table,
   .hori-align {
     display: flex;
     justify-content: center;
-  }
+  } */
 
   .info-wrapper {
     width: 100%;
@@ -194,11 +193,7 @@ p.file-name
     overflow: auto;
     padding: 0px;
   }
-  .cetered-align {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  
 
 .mychat-content > p,.mychat-content > pre {
     margin:0px;
@@ -349,11 +344,11 @@ MainContents
     margin-right: 3px;
 }
 
-.info-wrapper th,
+/* .info-wrapper th,
 .verti-align {
     display: flex;
     align-items: center;
-}
+} */
 
 /*-------------------------------------------
    CUSTOM NAV STYLE

@@ -28,7 +28,7 @@
 
             <div class="submenu-content" v-on:mouseleave="hiddenChannelDelete()">
               <div v-for="(channel) in channelList" :key="channel.id" v-on:mouseover="visibilityChannelDelete(channel.id)">
-                <a @click="joinChannel(channel)" @dblclick="confirmChannel($event, 'update', channel)" class="menu-item" style="display:flex;" :class="{ 'active-channel': channel.id == currentChannel.id}">
+                <a @click="joinChannel(channel)" @dblclick="confirmChannel($event, 'update', channel)" class="menu-item myflex" :class="{ 'active-channel': channel.id == currentChannel.id}">
                   <button class="channelDel" :id="'channelDel' + channel.id" @click="confirmChannel($event, 'delete', channel)" style="margin-left:-15px; display:flex; visibility:hidden" v-if="isAdmin()">
                     <i class="im im-minus-circle" style="font-size:15px; color:black;"></i>
                   </button>

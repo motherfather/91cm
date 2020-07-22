@@ -4,11 +4,19 @@ export default {
   // 현재 채널의 모든 taskList 가져오기
 
 
-  loadChannelFiles: function (context, payload) {
-    axios.post('/api/file/get/files', {
-      channel_id: payload
-    }).then(res => {
-      context.commit('setChannelFiles', res.data.reverse())
+  loadChannelFiles: async function (context, {fileCursorPoint,isFileDrawer}) {
+    await axios.post('/api/file/get/files', fileCursorPoint).then(res => {
+      let files = res.data 
+      console.log(files,'files')
+      if(isFileDrawer){
+        if(files.length == 0 ){
+          context.state.fileCursorPoint.empty = true  
+        }
+        context.state.fileCursorPoint.first = false
+        context.state.fileCursorPoint.cursorId = files[files.length - 1].id
+        console.log(context.state.fileCursorPoint,'context.state.fileCursorPoint')
+      }
+      context.commit('setChannelFiles', context.state.channelFiles.concat(files))
     }).catch(error => {
     })
   },

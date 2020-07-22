@@ -42,6 +42,13 @@ let channelMixin = {
         NotificationClass.sendNotification(this.$store.state.isfocus, data)
         if (data.channel_id == this.$store.state.currentChannel.id && this.enableComponent) {
           this.$store.commit('pushMsg', data)
+
+          if(data.message_type=='file'){
+            data.files.forEach(function(file){
+              this.$store.commit('addChannelFile',file)
+            })
+          }
+
           if (!this.$store.state.isfocus) {
             this.msgCountUpdate(data.channel_id, true)
           } else {
@@ -155,7 +162,9 @@ let channelMixin = {
     },
     //채널 진입
     joinChannel: function (channel) {
-      this.$store.dispatch('loadChannelFiles', channel.id)
+      // ?
+      //this.$store.dispatch('loadChannelFiles', channel.id)
+
       this.commit('getSelectComponent', 'main')
       if (channel !== undefined && channel != null) {
         if (channel.id != this.currentChannel.id) {
@@ -365,6 +374,7 @@ let channelMixin = {
       return this.isAdmin() || this.isMine(user)
     },
     loadChannelFiles: function (channel_id) {
+      // ?
       this.$store.dispatch('loadChannelFiles', channel_id)
     }
   }

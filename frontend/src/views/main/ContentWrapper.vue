@@ -4,7 +4,7 @@
       <ul class="c-c-wrapper list-unstyled" @scroll="scrollEvt">
         <div v-for="msg in msgArray" :key="msg.id">
           <MsgBox v-if="msg.message_type=='message'|| msg.message_type=='file'" :msg="msg"
-                  :msgPreviewBool="msgPreviewBool" @scrollToEnd="scrollToEnd"
+                  @scrollToEnd="scrollToEnd"
                   @imgLoad="imgLoad"></MsgBox>
           <div v-if="msg.message_type=='action'" class="hori-align">
             <v-chip class="ma-2" style="font-weight:bold;">
@@ -114,11 +114,7 @@
           username: ''
         },
         msgPreviewBool: false,
-        // isGetMsgForPreview: false,
-        // isGetMsgForImgLoad: false,
         selectedUserEmail: '',
-        scrollPosition:0,
-        isUpScroll: false
       }
     },
     mounted() {
@@ -143,10 +139,7 @@
     },
     methods: {
       imgLoad(e) {
-        
-        // 문제 있으면 아래 코드 지우기..
         this.$store.state.oldScrollHeight = this.wrapperEl.scrollHeight
-        
         // 스크롤을 올리고 있을 때 이미지가 로드되어서 스크롤이 강제로 하단으로 가는 문제를 해결하기 위해 isUpScroll를 사용함.
         if (!this.msgPreviewBool && this.isGetMsgForImgLoad && !this.isUpScroll) {
           this.scrollToEnd(true)
@@ -199,8 +192,11 @@
             }
           }).then(res => {
           this.isFileUpload = false
-          this.$store.dispatch('loadChannelFiles', this.currentChannel.id)
-          this.currentChannel.send('loadChannelFiles|' + this.currentChannel.id)
+          
+          // 어떤걸 해주기 위해 loadChannelFiles를 해주는지...
+          // 어차피 본인도 callback함수가 실행되기 때문에 굳이 또 안해줘도 될듯
+          //this.$store.dispatch('loadChannelFiles', this.currentChannel.id)
+          //this.currentChannel.send('loadChannelFiles|' + this.currentChannel.id)
           this.scrollToEnd(true)
         }).catch(error => {
           this.isFileUpload = false
@@ -237,56 +233,15 @@
         this.uploadFile(formData)
 
       },
-      // send: async function (e, isSysMsg) {
-      //   if (e != null) {
-      //     e.preventDefault()
-      //   }
-      //   if (this.message.content == '') {
-      //     return;
-      //   }
-      //   if (isSysMsg) {
-      //     this.message.sender = null
-      //   } else {
-      //     this.message.sender = this.$store.state.currentUser.email
-      //     this.message.user = this.$store.state.currentUser
-      //   }
-      //   this.message.channel_id = this.$store.state.currentChannel.id
-      //   if (CommonClass.byteLimit(this.stringByteLength)) {
-      //     if (this.$store.state.stompClient && this.$store.state.stompClient.connected) {
-      //       this.$store.state.stompClient.send("/pub/chat/message", JSON.stringify(this.message), {})
-      //       this.message.content = ''
-      //       this.scrollToEnd(true)
-      //       if (this.sendMail) {
-      //         this.$store.state.channelUsers.filter(channelUser => channelUser != this.$store.state.currentUser)
-      //           .forEach(channelUser => {
-      //             this.$http.post('/api/message/send/mail', {
-      //               channelName: this.$store.state.currentChannel.name,
-      //               fromUser: this.$store.state.currentUser.name,
-      //               toUser: channelUser.email
-      //             })
-      //               .then(res => {
-      //                 this.sendMail = false
-      //               })
-      //           })
-      //       }
-      //     } else {
-      //       this.message.content = CommonClass.replaceErrorMsg(this.message.content)
-      //       this.message.content = '<p style="color:red;">메세지 전송에 실패하였습니다.</p>' + this.message.content
-      //       let errormsg = JSON.parse(JSON.stringify(this.message))
-      //       this.$store.commit('pushMsg', errormsg)
-      //       this.message.content = ''
-      //     }
-      //   }
-      // },
+
       scrollEvt(e) {
         let element = e.target;
-
         // ===== 스크롤업됐는지 확인하는 코드 start ======
         let currentScrollPosition = e.srcElement.scrollTop;
         if (currentScrollPosition < this.scrollPosition) {
-            this.isUpScroll = true
+            this.$store.commit('setIsUpScroll',true)
         }
-        this.scrollPosition = currentScrollPosition;
+        this.$store.commit('setScrollPosition',currentScrollPosition)
         //====== end ==================
 
         //스크롤이 없을때에도 스크롤 위치가 최상단이기 때문에 스크롤이 있는지 없는지 판단해야한다.
@@ -299,6 +254,7 @@
           this.msgPreviewBool = false
         }
       },
+
       scrollToEnd(bool) {
         this.$nextTick(() => {
           if (this.firstLoad) {

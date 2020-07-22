@@ -72,11 +72,30 @@ export default {
   setChannelFiles: function(state,payload){
     state.channelFiles = payload
   },
+  addChannelFile: function(state,payload){
+    // unshift와 같은 동작을 하지만 concat이 unshift보다 더 빠르다고 해서 사용
+    [payload].concat(state.channelFiles)
+  },
   setIsGetMsgForImgLoad:function(state,payload){
     state.isGetMsgForImgLoad = payload
   },
   setIsGetMsgForPreview:function(state,payload){
     state.isGetMsgForPreview = payload
+  },
+  setScrollPosition:function(state,payload){
+    state.scrollPosition = payload
+  },
+  setIsUpScroll:function(state,payload){
+    state.isUpScroll = payload
+  },
+  setFileCursorPoint:function(state,payload){
+    state.fileCursorPoint = payload
+  },
+  initFileCursorPoint:function(state){
+    state.fileCursorPoint.channel_id = 0
+    state.fileCursorPoint.first = true
+    state.fileCursorPoint.cursorId = 0
+    state.fileCursorPoint.empty = false
   }
 
 }

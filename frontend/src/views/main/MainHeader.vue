@@ -101,8 +101,15 @@
         $('.wrapper').toggleClass('right-sidebar-expand');
         if($('.main-content').hasClass('rsidebar-padding-right')){
           $('.main-content').removeClass('rsidebar-padding-right')
+          this.$store.commit('setChannelFiles',[])
         }else{
           $('.main-content').addClass('rsidebar-padding-right')
+          this.fileCursorPoint.channel_id = this.currentChannel.id
+          console.log(this.fileCursorPoint.channel_id,'this.fileCursorPoint.channel_id')
+          this.$store.dispatch('loadChannelFiles', {
+            fileCursorPoint:this.fileCursorPoint,
+            isFileDrawer:false
+            })
         }
         return false;
       },
