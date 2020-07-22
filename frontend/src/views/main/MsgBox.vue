@@ -15,7 +15,7 @@
             </slot>
           </div>
           <!-- 채팅메세지내용 -->
-          <div style="display:flex;">
+          <div class="myflex">
             <slot name="m-content">
               <div v-if="checkMsgType"
                    class="mychat-content">
@@ -55,7 +55,7 @@
       <!-- flex에서 벗어나기 위해 감쌈  -->
       <div @mouseover="showMsgOption(msg.id)" @mouseleave="hideMsgOption(msg.id)">
         <!-- 채팅메세지내용 -->
-        <div style="display:flex;">
+        <div class="myflex">
           <slot name="m-content">
             <div style="display:flex;align-items: flex-end;">
               <a class="verti-align confirmMsgDel" :id="'confirmMsgDel' + msg.id" @click="confirmDelete(msg)">
@@ -72,7 +72,7 @@
                   <a @click="fileDownload(file)">
                     <div class="hori-align">
                       <b-img :alt="file.original_name" :src="selectImage(file)" @load="$emit('imgLoad',$event)"
-                             style="max-width:100px"></b-img>
+                             style="max-width:100px; max-height:100px;"></b-img>
                     </div>
                     <!-- <b-img thumbnail rounded fluid  alt="이미지를 찾을 수 없습니다."
                            style="max-width: 200px" ></b-img> -->

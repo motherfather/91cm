@@ -14,6 +14,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,6 @@ import com.nineone.nocm.exception.UploadFileNotFoundException;
 import com.nineone.nocm.repository.FileStorage;
 import com.nineone.nocm.util.DateUtil;
 
-import net.coobird.thumbnailator.Thumbnailator;
 import net.coobird.thumbnailator.Thumbnails;
 
 @Service
@@ -52,8 +52,8 @@ public class FileStorageService {
         	throw new FileStorageException("could not create the directory",ex);
         }
     }
-	public List<ContentsFile> getChannelFileList(int channel_id){
-    	return fileStorage.getChannelFileList(channel_id);
+	public List<ContentsFile> getChannelFileList(Map<String,Object> map){
+    	return fileStorage.getChannelFileList(map);
 	}
     public Path makeDateDirectories(String parentsDirName) {
     	String dirName = new SimpleDateFormat("yyyyMMdd").format(DateUtil.makeDate());

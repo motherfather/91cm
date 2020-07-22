@@ -1,11 +1,13 @@
 package com.nineone.nocm.repository;
 
-import com.nineone.nocm.domain.ContentsFile;
+import java.util.List;
+import java.util.Map;
+
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.nineone.nocm.domain.ContentsFile;
 
 @Repository
 public class FileStorage {
@@ -23,8 +25,8 @@ public class FileStorage {
     	return sqlSession.selectOne(namespace + ".getFile", server_name);
     }
 
-    public List<ContentsFile> getChannelFileList(int channel_id){
-        return sqlSession.selectList(namespace+".getChannelFileList",channel_id);
+    public List<ContentsFile> getChannelFileList(Map<String,Object> map){
+        return sqlSession.selectList(namespace+".getChannelFileList",map);
     }
 
 }

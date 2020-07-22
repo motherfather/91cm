@@ -13,9 +13,6 @@ let messageMixin = {
         content: '',
         username: ''
       },
-      // msgPreviewBool: false,
-      // isGetMsgForPreview: false,
-      // isGetMsgForImgLoad: false,
       selectedUserEmail: '',
     }
   },
@@ -65,6 +62,10 @@ let messageMixin = {
       this.cursorPoint.first = true
       this.cursorPoint.cursorId = 0
       this.cursorPoint.empty = false
+      this.$store.commit('setIsGetMsgForImgLoad',false)
+      this.$store.commit('setIsGetMsgForPreview',false)
+      this.$store.commit('setScrollPosition',0)
+      this.$store.commit('setIsUpScroll',false)
     },
     //채널 메시지 조회
     selectMessageList: function (channel, isInit) {
@@ -109,7 +110,6 @@ let messageMixin = {
               this.$store.commit('setOldScrollHeight',this.wrapperEl.scrollHeight)
             })
           }
-          
           this.$store.commit('setIsGetMsgForPreview',true)
         }
       })

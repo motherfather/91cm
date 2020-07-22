@@ -45,7 +45,7 @@
               <i class="im im-calendar"></i>
               <span style="margin-left:20px;">Calendar</span>
             </a>
-            <a v-if="channelFiles.length != 0" class="list-group-item" @click="callComponent('fileDrawer')">
+            <a class="list-group-item" @click="callComponent('fileDrawer')">
               <i class="im im-files-o"></i>
               <span style="margin-left:20px;">Files</span>
             </a>
@@ -112,6 +112,7 @@
         this.$store.commit('setIsVideoMode', !this.isVideoMode)
         this.callComponent('main', true)
       },
+      // 사용하는지 확인
       rightSidebarToggle: function (e) {
         // console.log(e)
         $('.right-sidebar-toggle')[0].classList.toggle('active');
@@ -129,6 +130,7 @@
         $('.right-sidebar-toggle')[0].classList.toggle('active');
         $('.wrapper').removeClass('right-sidebar-expand');
         $('.main-content').removeClass('rsidebar-padding-right')
+        this.$store.commit('setChannelFiles',[])
         // this.$store.state.isRActive = false
       },
       useModal: function (mode) {

@@ -32,4 +32,7 @@ export default {
   getChannelFiles: state => state.channelFiles,
   getIsGetMsgForImgLoad : state => state.isGetMsgForImgLoad,
   getIsGetMsgForPreview : state => state.isGetMsgForPreview,
+  getScrollPosition: state => state.scrollPosition,
+  getIsUpScroll : state => state.isUpScroll,
+  getFileCursorPoint: state => state.fileCursorPoint
 }

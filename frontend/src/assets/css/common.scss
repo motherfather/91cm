@@ -1,0 +1,21 @@
+.myflex{
+    display:flex !important;
+}
+
+.info-wrapper th,
+.verti-align {
+    display: flex;
+    align-items: center;
+}
+
+.info-wrapper table,
+  .hori-align {
+    display: flex;
+    justify-content: center;
+}
+
+.cetered-align {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
