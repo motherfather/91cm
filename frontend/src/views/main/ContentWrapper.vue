@@ -192,11 +192,6 @@
             }
           }).then(res => {
           this.isFileUpload = false
-          
-          // 어떤걸 해주기 위해 loadChannelFiles를 해주는지...
-          // 어차피 본인도 callback함수가 실행되기 때문에 굳이 또 안해줘도 될듯
-          //this.$store.dispatch('loadChannelFiles', this.currentChannel.id)
-          //this.currentChannel.send('loadChannelFiles|' + this.currentChannel.id)
           this.scrollToEnd(true)
         }).catch(error => {
           this.isFileUpload = false
@@ -248,7 +243,6 @@
         if (element.scrollTop <= 0 && element.scrollHeight != element.clientHeight) {
           if (this.$store.state.cursorPoint.empty == false) {
             this.selectMessageList(this.currentChannel, false)
-            //this.getMessage(element)
           }
         } else if (this.isScrollAtEnd(element)) {
           this.msgPreviewBool = false

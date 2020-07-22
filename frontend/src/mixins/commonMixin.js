@@ -22,7 +22,7 @@ let commonMixin = {
       isGetMsgForPreview: 'getIsGetMsgForPreview',
       scrollPosition: 'getScrollPosition',
       isUpScroll: 'getIsUpScroll',
-      fileCursorPoint: 'getFileCursorPoint'
+      fileCursorPoint: 'getFileCursorPoint',
     })
   },
   methods: {

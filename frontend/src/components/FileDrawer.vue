@@ -111,7 +111,21 @@
     },
     mounted() {
       this.initFiles()
-      document.onscroll = async ()=>{
+    },
+    activated() {
+      this.$store.commit('initFileCursorPoint')
+      this.fileCursorPoint.channel_id = this.currentChannel.id
+      this.$store.dispatch('loadChannelFiles', {
+            fileCursorPoint:this.fileCursorPoint,
+            isFileDrawer:true
+            })
+      document.addEventListener('scroll',this.scrollCallBackFunc)
+    },
+    deactivated() {
+      document.removeEventListener('scroll',this.scrollCallBackFunc)
+    },
+    methods: {
+      scrollCallBackFunc:async function(){
         let d = document.documentElement
         if((d.scrollTop + d.clientHeight > d.scrollHeight - 80 ) && (this.fileCursorPoint.empty == false)&& this.flag){
           // flag를 넣은 이유는 싱크가 안맞아서 위 조건이 성립하지 않음에도 아래 비동기통신이 이루어져서 임시로 넣은 변수이다.
@@ -122,19 +136,7 @@
             })
           this.flag = true        
         }
-      }
-    },
-    activated() {
-      this.$store.commit('initFileCursorPoint')
-      this.fileCursorPoint.channel_id = this.currentChannel.id
-      this.$store.dispatch('loadChannelFiles', {
-            fileCursorPoint:this.fileCursorPoint,
-            isFileDrawer:true
-            })
-    },
-    deactivated() {
-    },
-    methods: {
+      },
       initFiles: function () {
         if(this.channelFiles.length>0){
           this.rows = []
