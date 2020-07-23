@@ -1,7 +1,21 @@
+@import './common.scss';
+
+.txtfile-inner{
+    max-height: 80vh;
+    max-width: 50vw;
+    display: flex;
+    min-width: 50vw;
+    background: white;
+    min-height: 80vh;
+}
+
+.txtfile-container{
+    overflow: auto;
+}
+
 .file-font-h4{
     font-size: x-large;
 }
-
 
 .rsidebar-padding-right{
  padding-right: 320px !important;
@@ -22,9 +36,6 @@
     order: 1
 }
 
-.myflex{
-    display:flex;
-}
 .msgflex-end{
     justify-content: flex-end;
 }
@@ -170,11 +181,11 @@ p.file-name
     justify-content: flex-end;
   }
 
-  .info-wrapper table,
+  /* .info-wrapper table,
   .hori-align {
     display: flex;
     justify-content: center;
-  }
+  } */
 
   .info-wrapper {
     width: 100%;
@@ -183,17 +194,24 @@ p.file-name
     overflow: auto;
     padding: 0px;
   }
-  .cetered-align {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  
 
-.mychat-content > p {
+.mychat-content > p,.mychat-content > pre {
     margin:0px;
     display:flex;
-    /*height: 21px;*/
+    /* height: 21px; */
+    font-family: Roboto,sans-serif;
+    overflow: auto;
+    white-space: pre-wrap;
 }
+pre > p{
+    margin:0px !important;
+    font-size: 1em;
+}
+pre > samp{
+    font-family: Roboto,sans-serif;
+}
+
 
 .my-message{
     background-color: #BBDEFB!important;
@@ -327,11 +345,11 @@ MainContents
     margin-right: 3px;
 }
 
-.info-wrapper th,
+/* .info-wrapper th,
 .verti-align {
     display: flex;
     align-items: center;
-}
+} */
 
 /*-------------------------------------------
    CUSTOM NAV STYLE
@@ -636,3 +654,11 @@ ul.CTAs a {
       display: none;
   }
 }
+
+@media (max-width:1250px){
+    .txtfile-inner{
+        min-width: 80vw;
+        max-width: 80vw;
+    }
+}
+

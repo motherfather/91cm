@@ -102,6 +102,8 @@
         if($('.main-content').hasClass('rsidebar-padding-right')){
           $('.main-content').removeClass('rsidebar-padding-right')
         }else{
+          console.log(this,'this')
+          console.log(this.fileCursorPoint,'this.fileCursorPoint')
           $('.main-content').addClass('rsidebar-padding-right')
         }
         return false;

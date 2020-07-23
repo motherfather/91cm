@@ -14,9 +14,6 @@ let messageMixin = {
         content: '',
         username: ''
       },
-      msgPreviewBool: false,
-      isGetMsgForPreview: false,
-      isGetMsgForImgLoad: false,
       selectedUserEmail: '',
     }
   },
@@ -28,7 +25,7 @@ let messageMixin = {
       channelList: 'getChannelList',
       wrapperEl: 'getWrapperEl',
       cursorPoint: 'getCursorPoint',
-      oldScrollHeight: 'getOldScrollHeight'
+      oldScrollHeight: 'getOldScrollHeight',
     })
   },
   methods: {
@@ -66,6 +63,10 @@ let messageMixin = {
       this.cursorPoint.first = true
       this.cursorPoint.cursorId = 0
       this.cursorPoint.empty = false
+      this.$store.commit('setIsGetMsgForImgLoad',false)
+      this.$store.commit('setIsGetMsgForPreview',false)
+      this.$store.commit('setScrollPosition',0)
+      this.$store.commit('setIsUpScroll',false)
     },
     //채널 메시지 조회
     selectMessageList: function (channel, isInit) {
@@ -81,15 +82,21 @@ let messageMixin = {
           if (res.data.length == 0) {
             this.cursorPoint.empty = true
           } else {
+              if(this.cursorPoint.first){
+                this.$store.commit('setIsGetMsgForImgLoad',true)
+              }else{
+                this.$store.commit('setIsGetMsgForImgLoad',false)
+              }
             this.cursorPoint.first = false
             this.cursorPoint.cursorId = res.data[res.data.length - 1].id
           }
           for (let i = 0; i < res.data.length; i++) {
             if (res.data[i].delete_yn == 'Y') {
               res.data[i].content = '<p class="deletemsg">삭제된 메세지입니다.</p>'
-            } else {
-              res.data[i].content = CommonClass.replacemsg(res.data[i].content)
             }
+            // else {
+            //   res.data[i].content = CommonClass.replacemsg(res.data[i].content)
+            // }
           }
           this.commit('setMsgArray', res.data.reverse().concat(this.msgArray))
 
@@ -103,8 +110,7 @@ let messageMixin = {
               this.$store.commit('setOldScrollHeight',this.wrapperEl.scrollHeight)
             })
           }
-          this.isGetMsgForPreview = true
-          this.isGetMsgForImgLoad = true
+          this.$store.commit('setIsGetMsgForPreview',true)
         }
       })
     },
@@ -115,10 +121,13 @@ let messageMixin = {
         target_lang: 'en'
       }).then(res=>{
         let translateText=res.data
-        this.message.content += '\n &<hr> \n'+translateText
+        this.message.content += +translateText
       }).catch(error =>{
         console.error(error)
       })
+    },
+    messageTypeCheck: function(){
+
     },
     //채널 메시지 전송
     sendMessage: async function (e, isSysMsg) {
@@ -162,7 +171,7 @@ let messageMixin = {
               })
           }
         } else {
-          this.message.content = CommonClass.replaceErrorMsg(this.message.content)
+          // this.message.content = CommonClass.replaceErrorMsg(this.message.content)
           this.message.content = '<p style="color:red;">메세지 전송에 실패하였습니다.</p>' + this.message.content
           let errormsg = JSON.parse(JSON.stringify(this.message))
           this.$store.commit('pushMsg', errormsg)
@@ -174,11 +183,6 @@ let messageMixin = {
     },
     //채널 메시지 삭제
     deleteMessage: function (msg) {
-      // 해당 메세지 삭제되었습니다로 변경하는 로직, 실시간적으로 변경되는 로직
-      // 프론트에서 서로 메세지만 교체하는 방법,
-
-      // 아예 메시지리스트를 새로 가져오는 방법 -> 메세지 찾기하고 있거나 이전 메세지를 조회중일때
-      // 신호가 간다면 문제 생길 것 같음 모드가 바뀌었을때 메세지arr 변경 못하게 바꾸거나 프론트 단에서 해당 메세지만 변경처리 해줘야 할듯
       this.$http.post('/api/message/update/deleteyn', msg).then(res => {
         if (res) {
           this.currentChannel.send("deleteMsgFromArr|" + msg.id)

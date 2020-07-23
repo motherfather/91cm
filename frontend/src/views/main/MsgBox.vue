@@ -15,10 +15,15 @@
             </slot>
           </div>
           <!-- 채팅메세지내용 -->
-          <div style="display:flex;">
-            <slot name="m-content ">
-              <div v-if="checkMsgType" v-html="textbyFilter(msg.content)"
+          <div class="myflex">
+            <slot name="m-content">
+              <div v-if="checkMsgType"
                    class="mychat-content">
+                <pre v-html="textbyFilter(msg.content)"></pre>
+                <v-row v-for="(url,index) in urlList" :key="index">
+                  <v-img :src="url.og_image"></v-img>
+                  <p>{{ url.og_title }}</p>
+                </v-row>
               </div>
               <div style="display:flex;align-items: flex-end;">
                 <div v-if="checkFileType" class="mychat-content">
@@ -26,7 +31,7 @@
                     <b-col v-for="(file,index) in msg.files" :key="index">
                       <a @click="fileDownload(file)">
                         <div class="hori-align">
-                          <b-img :alt="file.original_name" :src="selectImage(file)" @load="$emit('imgLoad')"
+                          <b-img :alt="file.original_name" :src="selectImage(file)" @load="$emit('imgLoad',$event)"
                                  style="max-width:100px"></b-img>
                         </div>
                         <p class="file-name"><b>{{file.original_name}}</b></p>
@@ -35,6 +40,11 @@
                           kb</p>
                       </a>
                     </b-col>
+                  </b-row>
+                </div>
+                <div v-if="msg.message_type == 'url'" class="mychat-content">
+                  <b-row>
+                    <v-img :src="og_image"></v-img>
                   </b-row>
                 </div>
                 <span style="font-size: 11px; margin:0px 3px; width:53px; ">{{ msg.str_send_date }}</span>
@@ -54,7 +64,7 @@
       <!-- flex에서 벗어나기 위해 감쌈  -->
       <div @mouseover="showMsgOption(msg.id)" @mouseleave="hideMsgOption(msg.id)">
         <!-- 채팅메세지내용 -->
-        <div style="display:flex;">
+        <div class="myflex">
           <slot name="m-content">
             <div style="display:flex;align-items: flex-end;">
               <a class="verti-align confirmMsgDel" :id="'confirmMsgDel' + msg.id" @click="confirmDelete(msg)">
@@ -62,15 +72,20 @@
               </a>
               <span style="font-size: 11px; margin:0px 3px; width:53px; ">{{ msg.str_send_date }}</span>
             </div>
-            <div v-if="checkMsgType" v-html="textbyFilter(msg.content)"
-                 class="my-message mychat-content"></div>
+            <div v-if="checkMsgType" class="my-message mychat-content">
+              <pre v-html="textbyFilter(msg.content)"></pre>
+              <v-row v-for="(url,index) in urlList" :key="index">
+                <v-img :src="url.og_image"></v-img>
+                <p v-model="url.og_title"></p>
+              </v-row>
+            </div>
             <div v-if="checkFileType" class="my-message mychat-content">
               <b-row>
                 <b-col v-for="(file,index) in msg.files" :key="index">
                   <a @click="fileDownload(file)">
                     <div class="hori-align">
-                      <b-img :alt="file.original_name" :src="selectImage(file)" @load="$emit('imgLoad')"
-                             style="max-width:100px"></b-img>
+                      <b-img :alt="file.original_name" :src="selectImage(file)" @load="$emit('imgLoad',$event)"
+                             style="max-width:100px; max-height:100px;"></b-img>
                     </div>
                     <!-- <b-img thumbnail rounded fluid  alt="이미지를 찾을 수 없습니다."
                            style="max-width: 200px" ></b-img> -->
@@ -95,7 +110,8 @@
     props: ['msg'],
     data() {
       return {
-        isMsgOption: false
+        isMsgOption: false,
+        urlList:[]
       }
     },
     computed: {
@@ -103,7 +119,9 @@
         return this.msg.sender == this.currentUser.email
       },
       checkMsgType: function () {
-        return this.msg.message_type == 'message' || this.msg.delete_yn == 'Y' || this.msg.message_type == 'translate'
+        return this.msg.message_type == 'message' || this.msg.delete_yn == 'Y'
+          || this.msg.message_type == 'translate' || this.msg.message_type == 'url'
+
       },
       checkFileType: function () {
         return this.msg.message_type == 'file' && this.msg.delete_yn == 'N'
@@ -123,25 +141,28 @@
         $(".confirmMsgDel").css("visibility", "hidden")
       },
       textbyFilter: function (content) {
-        const tagContentRegexp = new RegExp(/<p(.*?)>(.*?)<\/p>/g);
+        console.log("textbyFilter>>>>")
+        // const tagContentRegexp = new RegExp(/<p(.*?)>(.*?)<\/p>/g);
         const htmlTagRegexp = new RegExp(/(<([^>]+)>)/ig);
-        const urlRegexp = new RegExp(/(http(s)?:\/\/|www.)([a-z0-9\w]+\.*)+[a-z0-9]{2,4}([\/a-z0-9-%#?&=\w])+(\.[a-z0-9]{2,4}(\?[\/a-z0-9-%#?&=\w]+)*)*/)
+        const urlRegexp = /(http(s)?:\/\/|www.)([a-z0-9\w]+\.*)+[a-z0-9]{2,4}([\/a-z0-9-%#?&=\w])+(\.[a-z0-9]{2,4}(\?[\/a-z0-9-%#?&=\w]+)*)*/g
         let result = '';
         if (this.$store.state.searchText == '') {
-          if(this.msg.message_type == 'translate'){
-            result+='<small>원본</small>'
+          let arr = content.match(urlRegexp)
+          if (arr != null) {
+            content = '<p>' + content + '</p>'
+            this.makeUrlThumbnail(arr)
+            arr.forEach(contentItem => {
+              console.log("textbyFilter>>>>ForEach >>>>>>>>")
+              // 아래 코드 한줄은 어떤 용도인지? 에러떠서 주석
+              // contentItem = contentItem.replace(htmlTagRegexp, '')
+              // 같은 url을 두개 넣으면 에러
+              result = "<a style='color: blue' href='" + contentItem + "' target='_blank'>" + contentItem + "</a>"
+              content = content.replace(contentItem, result)
+            });
+            return content
+          } else {
+            return content
           }
-          content.match(tagContentRegexp).forEach(contentItem => {
-            if (urlRegexp.test(contentItem)) {
-              contentItem = contentItem.replace(htmlTagRegexp, '')
-              result += "<p><a style='color: blue' href='" + contentItem + "' target='_blank'>" + contentItem + "</a></p>"
-            } else if(new RegExp(/<p>&nbsp;&&lt;hr&gt;&nbsp;<\/p>/g).test(contentItem)){
-                result += '<hr> <small>번역</small>'
-            }else {
-              result += contentItem
-            }
-          });
-          return result
         }
         return this.$options.filters.highlight(content, this.$store.state.searchText);
       },
@@ -163,6 +184,18 @@
             window.URL.revokeObjectURL(url)
           })
       },
+      makeUrlThumbnail: function(urls) {
+        console.log("Call makeURLThumbnail Function >>>")
+        debugger
+        this.$http.post('/api/message/test',{
+          url:urls[0]
+        })
+          .then(res => {
+            console.log(res.data)
+            this.urlList.push(res.data)
+            debugger
+          })
+      }
     },
     filters: {
       highlight: function (stringToSearch, searchTerm) {

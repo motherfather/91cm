@@ -37,15 +37,16 @@ public class MessageApiController {
     private RestTemplate restTemplate;
 
     @RequestMapping("/test")
-    public Map<String,String>test(@RequestBody Map<String, String> map) throws IOException {
+    public Map<String,String>test(@RequestBody Map<String,String> map) throws IOException {
+        String url = map.get("url");
         Map<String,String> response = new HashMap<>();
-        Document doc = Jsoup.connect("https://www.html5rocks.com/ko/tutorials/webrtc/infrastructure/").get();
+        Document doc = Jsoup.connect(url).get();
         Elements metaOg = doc.getElementsByTag("meta");
         for (Element og : metaOg){
             String property = og.attr("property");
             String content = og.attr("content");
             if (property.startsWith("og:")){
-                response.put(property,content);
+                response.put(property.replace(":","_"),content);
             }
         }
         return response;
@@ -99,5 +100,4 @@ public class MessageApiController {
     public boolean updateDeleteYN(@RequestBody Message msg) {
         return messageServie.deleteDeleteYN(msg.getId());
     }
-
 }

@@ -136,9 +136,9 @@ public class FileController {
 
     
     @PostMapping("/get/files")
-    public List<ContentsFile> getChannelFileList(@RequestBody Map<String,Integer> map){
-        int channel_id = map.get("channel_id");
-        List<ContentsFile> list = fileStorageService.getChannelFileList(channel_id);
+    public List<ContentsFile> getChannelFileList(@RequestBody Map<String,Object> map){
+        //int channel_id = map.get("channel_id");
+        List<ContentsFile> list = fileStorageService.getChannelFileList(map);
         return list;
     }
 

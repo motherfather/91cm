@@ -43,7 +43,7 @@
         </div>
         <div v-if="isTxtFile" class="txtfile-container">
             <div class="txtfile-inner">
-              <pre style="color: black;margin: 0px;background-color: white;">{{txtVal}}</pre>  
+              <pre style="color: black;margin: 0px;">{{txtVal}}</pre>  
             </div>
         </div>
       </div>
@@ -83,8 +83,6 @@
       },
       isTxtFile:function(){
         if(this.selectFile!==undefined && this.selectFile.extension === 'txt'){
-          // 나중에 api 만들면 아래코드 api 호출 후로 변경해야함
-          //this.showFile=true
           return true
         }else{
           return false
@@ -153,6 +151,7 @@
         this.overlayShow = false
         this.selectFile = undefined
         this.showFile = false
+        this.txtVal=''
       },
       moveFile: function (index) {
         if (index < 0) {
@@ -169,6 +168,8 @@
         this.selectFile = this.channelFiles[index];
         if(!this.isImgFile && !this.isTxtFile && !this.isPdfFile){
           this.showFile = true
+        }else if(this.isTxtFile){
+          this.loadTxt(this.selectFile)
         }
       },
       loadPdfFile(file) {

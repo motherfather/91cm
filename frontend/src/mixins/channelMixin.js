@@ -41,8 +41,14 @@ let channelMixin = {
       if (data.message === undefined) {
         NotificationClass.sendNotification(this.$store.state.isfocus, data)
         if (data.channel_id == this.$store.state.currentChannel.id && this.enableComponent) {
-          data.content = CommonClass.replacemsg(data.content)
           this.$store.commit('pushMsg', data)
+
+          if(data.message_type=='file'){
+            data.files.forEach(function(file){
+              this.$store.commit('addChannelFile',file)
+            })
+          }
+
           if (!this.$store.state.isfocus) {
             this.msgCountUpdate(data.channel_id, true)
           } else {
@@ -156,10 +162,11 @@ let channelMixin = {
     },
     //채널 진입
     joinChannel: function (channel) {
-      this.$store.dispatch('loadChannelFiles', channel.id)
       this.commit('getSelectComponent', 'main')
       if (channel !== undefined && channel != null) {
         if (channel.id != this.currentChannel.id) {
+          this.$store.commit('setChannelFiles',[])
+          this.$store.commit('initFileCursorPoint')
           this.commit('setCurrentChannel', channel)//채널 진입
           this.initChannelUserList()
           this.selectChannelUserList(channel)//채널 사용자 조회
@@ -171,6 +178,7 @@ let channelMixin = {
           if (channel != null) {
             channel.access()
           }
+          this.getRSidebarPreviewFiles()
         } else {
           this.selectChannelUserList(channel)//채널 사용자 조회
         }
@@ -179,6 +187,14 @@ let channelMixin = {
         this.commit('setCurrentChannel', null)
         this.initChannelUserList()
       }
+    },
+    // 오른쪽사이드바 파일미리보기 가져오기
+    getRSidebarPreviewFiles: function(){
+      this.fileCursorPoint.channel_id = this.currentChannel.id
+      this.$store.dispatch('loadChannelFiles', {
+        fileCursorPoint:this.fileCursorPoint,
+        isFileDrawer:false
+      })
     },
     //채널 사용자 조회
     selectChannelUserList: function (channel = this.$store.state.currentChannel) {
@@ -366,6 +382,7 @@ let channelMixin = {
       return this.isAdmin() || this.isMine(user)
     },
     loadChannelFiles: function (channel_id) {
+      // ?
       this.$store.dispatch('loadChannelFiles', channel_id)
     }
   }
