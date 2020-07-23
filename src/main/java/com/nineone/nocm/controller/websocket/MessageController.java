@@ -15,6 +15,7 @@ import com.nineone.nocm.domain.ApiResponse;
 import com.nineone.nocm.domain.Message;
 import com.nineone.nocm.service.MessageService;
 import com.nineone.nocm.util.DateUtil;
+import org.springframework.web.client.RestTemplate;
 
 @Controller
 public class MessageController {
@@ -39,12 +40,12 @@ public class MessageController {
 			messageService.insertMessage(dateMessage);
 			messagingTemplate.convertAndSend("/sub/chat/room/"+dateMessage.getChannel_id(), dateMessage);
 		}
-			
+
 		// sender가 null이면 시스템메시지이기 때문에.
 		if(message.getSender()!=null) {
 			message.setContent(messageService.replacemsg(message.getContent()));
 		}
-		
+
 		if(messageService.insertMessage(message) > 0) {
 			messagingTemplate.convertAndSend("/sub/chat/room/"+message.getChannel_id(), message);
 		}else {

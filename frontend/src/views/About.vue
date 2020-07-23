@@ -1,19 +1,8 @@
 <template>
   <div @contextmenu="show">
-    <h1>번역기</h1>
-    <v-textarea
-      v-model="text"
-      background-color="grey lighten-2"
-      color="cyan"
-      label="Label"
-    ></v-textarea>
-    <v-textarea
-      v-model="text2"
-      background-color="grey lighten-2"
-      color="cyan"
-      label="Label"
-    ></v-textarea>
-    <v-btn @click="translate">번역</v-btn>
+    <div>
+      <v-btn @click="test">Click</v-btn>
+    </div>
     <v-menu
       v-model="showMenu"
       :position-x="x"
@@ -68,17 +57,12 @@
           this.showMenu = true
         })
       },
-      translate: function () {
-        this.text2 = ''
-        this.$http.post('/api/user/test', {
-          query: this.text
+      test: function () {
+        this.$http.post("/api/message/test",{
+          url: 'https://www.html5rocks.com/ko/tutorials/webrtc/infrastructure/'
+        }).then(res=>{
+          console.log(res)
         })
-          .then(res => {
-            console.log(res.data)
-            res.data.translated_text.forEach(text=>{
-                this.text2+=text
-            })
-          })
       }
     }
   }

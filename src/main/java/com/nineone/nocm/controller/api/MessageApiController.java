@@ -1,14 +1,15 @@
 package com.nineone.nocm.controller.api;
 
-import java.lang.reflect.Array;
+import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.nineone.nocm.util.GoogleMailSender;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -30,14 +31,28 @@ public class MessageApiController {
 
     @Autowired
     MessageService messageServie;
-
     @Autowired
     private GoogleMailSender googleMailSender;
     @Autowired
-    RestTemplate restTemplate;
+    private RestTemplate restTemplate;
+
+    @RequestMapping("/test")
+    public Map<String,String>test(@RequestBody Map<String, String> map) throws IOException {
+        Map<String,String> response = new HashMap<>();
+        Document doc = Jsoup.connect("https://www.html5rocks.com/ko/tutorials/webrtc/infrastructure/").get();
+        Elements metaOg = doc.getElementsByTag("meta");
+        for (Element og : metaOg){
+            String property = og.attr("property");
+            String content = og.attr("content");
+            if (property.startsWith("og:")){
+                response.put(property,content);
+            }
+        }
+        return response;
+    }
 
     @RequestMapping("/translate")
-    public String test(@RequestBody Map<String, String> map) {
+    public String translate(@RequestBody Map<String, String> map) {
         ArrayList<ArrayList> list = new ArrayList();
         StringBuilder response = new StringBuilder();
         String text = map.get("text");
