@@ -74,7 +74,7 @@ export default {
   },
   addChannelFile: function(state,payload){
     // unshift와 같은 동작을 하지만 concat이 unshift보다 더 빠르다고 해서 사용
-    [payload].concat(state.channelFiles)
+    state.channelFiles = [payload].concat(state.channelFiles)
   },
   setIsGetMsgForImgLoad:function(state,payload){
     state.isGetMsgForImgLoad = payload

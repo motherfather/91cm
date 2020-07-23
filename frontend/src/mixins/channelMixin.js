@@ -44,7 +44,7 @@ let channelMixin = {
           this.$store.commit('pushMsg', data)
 
           if(data.message_type=='file'){
-            data.files.forEach(function(file){
+            data.files.forEach((file)=>{
               this.$store.commit('addChannelFile',file)
             })
           }
