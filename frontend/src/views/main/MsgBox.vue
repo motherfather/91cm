@@ -187,6 +187,9 @@
       },
       makeUrlThumbnail: function () {
         let content = this.msg.content
+        if (content == null){
+          return
+        }
         let arr = content.match(urlRegexp)
         if (arr != null) {
           arr.forEach(urlString => {

@@ -134,7 +134,7 @@
             fileCursorPoint:this.fileCursorPoint,
             isFileDrawer:true
             })
-          this.flag = true        
+          this.flag = true
         }
       },
       initFiles: function () {
@@ -169,9 +169,6 @@
           this.pages = pdf.numPages;
           this.showFile = true
         });
-      },
-      callComponent: function (componentName) {
-        this.$store.commit('getSelectComponent', componentName)
       },
       selectImage: function (file, option) {
         if (this.prevImage === undefined) {

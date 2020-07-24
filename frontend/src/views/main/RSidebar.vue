@@ -35,21 +35,22 @@
 
             <!-- 화상 채팅 메뉴 끝 -->
             <!-- to do list 메뉴 시작 -->
-            <a class="list-group-item" @click="callComponent('todoList')">
+            <a class="list-group-item" @click="callComponentAndSideBarClose('todoList')">
               <i class="im im-task-o"></i>
               <span style="margin-left:20px;">Todo List</span>
             </a>
             <!-- to do list 메뉴 끝 -->
             <!-- calender 메뉴 시작 -->
-            <a class="list-group-item" @click="callComponent('calendar')">
+            <a class="list-group-item" @click="callComponentAndSideBarClose('calendar')">
               <i class="im im-calendar"></i>
               <span style="margin-left:20px;">Calendar</span>
             </a>
-            <a class="list-group-item" @click="callComponent('fileDrawer')">
+            <a class="list-group-item" @click="callComponentAndSideBarClose('fileDrawer')"
+               v-if="channelFiles.length > 0">
               <i class="im im-files-o"></i>
               <span style="margin-left:20px;">Files</span>
             </a>
-            <b-collapse id="files" visible v-if="channelFiles.length != 0">
+            <b-collapse id="files" visible v-if="channelFiles.length > 0">
               <!--파일이 3개보다 작을때 테스트 필요 -->
               <v-row
                 style="width: 320px;padding: 0 1.07143em 1em 1.07143em; margin: 0px;"
@@ -110,18 +111,17 @@
       },
       toggleVideoMode: function () {
         this.$store.commit('setIsVideoMode', !this.isVideoMode)
-        this.callComponent('main', true)
+        this.callComponentAndSideBarClose('main', true)
       },
       // 사용하는지 확인
       rightSidebarToggle: function (e) {
-        // console.log(e)
         $('.right-sidebar-toggle')[0].classList.toggle('active');
         $('.wrapper').toggleClass('right-sidebar-expand');
         return false;
       },
-      callComponent: function (componentName, bool) {
+      callComponentAndSideBarClose: function (componentName, bool) {
         this.RSidebarClose()
-        this.$store.commit('getSelectComponent', componentName)
+        this.callComponent(componentName, bool)
         if (bool == null) {
           this.$store.commit('setIsVideoMode', false)
         }

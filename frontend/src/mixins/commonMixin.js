@@ -60,7 +60,10 @@ let commonMixin = {
         'message': message,
         'error': "null"
       }))
-    }
+    },
+    callComponent: function (component) {
+      this.$store.commit('getSelectComponent', component)
+    },
   }
 };
 export default commonMixin;

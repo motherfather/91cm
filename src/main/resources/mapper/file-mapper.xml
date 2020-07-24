@@ -13,12 +13,12 @@
     	select * from file where server_name = #{server_name}
     </select>
 
-	
+
 	<sql id="fileSql">
-        ( SELECT MESSAGE.SEND_DATE 
-            FROM MESSAGE 
-            JOIN FILE 
-              ON FILE.MESSAGE_ID = MESSAGE.ID 
+        ( SELECT MESSAGE.SEND_DATE
+            FROM MESSAGE
+            JOIN FILE
+              ON FILE.MESSAGE_ID = MESSAGE.ID
            WHERE FILE.ID = #{cursorId})
     </sql>
 
@@ -27,37 +27,37 @@
         JOIN MESSAGE M
         ON F.MESSAGE_ID = M.ID
         WHERE M.CHANNEL_ID = #{channel_id} AND M.DELETE_YN = 'N' -->
-        
-        
 
-        
-        SELECT * 
+
+
+
+        SELECT *
           FROM FILE F
-          JOIN MESSAGE M 
-            ON F.MESSAGE_ID = M.ID 
-         WHERE M.CHANNEL_ID = #{channel_id} 
-           AND M.DELETE_YN = 'N' 
+          JOIN MESSAGE M
+            ON F.MESSAGE_ID = M.ID
+         WHERE M.CHANNEL_ID = #{channel_id}
+           AND M.DELETE_YN = 'N'
 		<if test="first.equals(false)">
-		   AND ( M.SEND_DATE <![CDATA[<]]> 
+		   AND ( M.SEND_DATE <![CDATA[<]]>
 		   <include refid="fileSql"/>
-		    OR ( M.SEND_DATE = 
-		   <include refid="fileSql"/> 
+		    OR ( M.SEND_DATE =
+		   <include refid="fileSql"/>
 		   AND F.ID <![CDATA[<]]> #{cursorId}))
 		</if>
-      ORDER BY M.SEND_DATE DESC , M.ID DESC LIMIT 10
+      ORDER BY M.SEND_DATE DESC , M.ID DESC LIMIT 30
     </select>
-    
-    
+
+
     <!-- 커서기반 스크롤페이징 쿼리 테스트 아직 안해봄 -->
     <!-- SELECT *
           FROM FILE F
-     	  JOIN MESSAGE M 
+     	  JOIN MESSAGE M
             ON F.MESSAGE_ID = M.ID
          WHERE M.CHANNEL_ID = #{channel_id} AND M.DELETE_YN = 'N'
            <if test="first.equals(false)">
-           AND ( SEND_DATE <![CDATA[<]]> 
+           AND ( SEND_DATE <![CDATA[<]]>
 		   <include refid="com.nineone.nocm.mapper.message.messageSql"/>
- 			OR ( SEND_DATE = <include refid="com.nineone.nocm.mapper.message.messageSql"/> 
+ 			OR ( SEND_DATE = <include refid="com.nineone.nocm.mapper.message.messageSql"/>
  		   AND ID <![CDATA[<]]> #{cursorId} ) )
            </if>
       ORDER BY M.SEND_DATE DESC

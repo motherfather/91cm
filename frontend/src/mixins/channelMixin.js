@@ -38,6 +38,7 @@ let channelMixin = {
     },
     channelSubscribeCallBack(e) {
       let data = JSON.parse(e.body)
+      let _this = this
       if (data.message === undefined) {
         NotificationClass.sendNotification(this.$store.state.isfocus, data)
         if (data.channel_id == this.$store.state.currentChannel.id && this.enableComponent) {
@@ -45,7 +46,7 @@ let channelMixin = {
 
           if(data.message_type=='file'){
             data.files.forEach(function(file){
-              this.$store.commit('addChannelFile',file)
+              _this.$store.commit('addChannelFile',file)
             })
           }
 
