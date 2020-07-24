@@ -20,10 +20,7 @@
               <div v-if="checkMsgType"
                    class="mychat-content">
                 <pre v-html="textbyFilter(msg.content)"></pre>
-                <v-row v-for="(url,index) in urlList" :key="index">
-                  <v-img :src="url.og_image"></v-img>
-                  <p>{{ url.og_title }}</p>
-                </v-row>
+
               </div>
               <div style="display:flex;align-items: flex-end;">
                 <div v-if="checkFileType" class="mychat-content">
@@ -72,13 +69,14 @@
               </a>
               <span style="font-size: 11px; margin:0px 3px; width:53px; ">{{ msg.str_send_date }}</span>
             </div>
+
             <div v-if="checkMsgType" class="my-message mychat-content">
               <pre v-html="textbyFilter(msg.content)"></pre>
-              <v-row v-for="(url,index) in urlList" :key="index">
-                <v-img :src="url.og_image"></v-img>
-                <p v-model="url.og_title"></p>
-              </v-row>
             </div>
+<!--              <div>-->
+<!--                <v-img :src="urlList[0].og_image"></v-img>-->
+<!--                <v-card-title>{{urlList[0].og_title}}</v-card-title>-->
+<!--              </div>-->
             <div v-if="checkFileType" class="my-message mychat-content">
               <b-row>
                 <b-col v-for="(file,index) in msg.files" :key="index">
@@ -105,13 +103,15 @@
 <script>
   import CommonClass from "../../service/common";
 
+  const urlRegexp = /(http(s)?:\/\/|www.)([a-z0-9\w]+\.*)+[a-z0-9]{2,4}([\/a-z0-9-%#?&=\w])+(\.[a-z0-9]{2,4}(\?[\/a-z0-9-%#?&=\w]+)*)*/g
+
   export default {
     name: 'MsgBox',
     props: ['msg'],
     data() {
       return {
         isMsgOption: false,
-        urlList:[]
+        urlList: []
       }
     },
     computed: {
@@ -127,6 +127,10 @@
         return this.msg.message_type == 'file' && this.msg.delete_yn == 'N'
       },
     },
+    created() {
+      console.log("MsgBox created >>>>>>>>>")
+      this.makeUrlThumbnail()
+    },
     methods: {
       formatBytes: function (byte) {
         return CommonClass.formatBytes(byte)
@@ -141,20 +145,17 @@
         $(".confirmMsgDel").css("visibility", "hidden")
       },
       textbyFilter: function (content) {
-        console.log("textbyFilter>>>>")
         // const tagContentRegexp = new RegExp(/<p(.*?)>(.*?)<\/p>/g);
-        const htmlTagRegexp = new RegExp(/(<([^>]+)>)/ig);
-        const urlRegexp = /(http(s)?:\/\/|www.)([a-z0-9\w]+\.*)+[a-z0-9]{2,4}([\/a-z0-9-%#?&=\w])+(\.[a-z0-9]{2,4}(\?[\/a-z0-9-%#?&=\w]+)*)*/g
+        // const htmlTagRegexp = new RegExp(/(<([^>]+)>)/ig);
         let result = '';
         if (this.$store.state.searchText == '') {
           let arr = content.match(urlRegexp)
           if (arr != null) {
             content = '<p>' + content + '</p>'
-            this.makeUrlThumbnail(arr)
             arr.forEach(contentItem => {
-              console.log("textbyFilter>>>>ForEach >>>>>>>>")
               // 아래 코드 한줄은 어떤 용도인지? 에러떠서 주석
               // contentItem = contentItem.replace(htmlTagRegexp, '')
+
               // 같은 url을 두개 넣으면 에러
               result = "<a style='color: blue' href='" + contentItem + "' target='_blank'>" + contentItem + "</a>"
               content = content.replace(contentItem, result)
@@ -184,17 +185,19 @@
             window.URL.revokeObjectURL(url)
           })
       },
-      makeUrlThumbnail: function(urls) {
-        console.log("Call makeURLThumbnail Function >>>")
-        debugger
-        this.$http.post('/api/message/test',{
-          url:urls[0]
-        })
-          .then(res => {
-            console.log(res.data)
-            this.urlList.push(res.data)
-            debugger
+      makeUrlThumbnail: function () {
+        let content = this.msg.content
+        let arr = content.match(urlRegexp)
+        if (arr != null) {
+          arr.forEach(urlString => {
+            this.$http.post('/api/message/test', {
+              url: urlString
+            })
+              .then(res => {
+                this.urlList.push(res.data)
+              })
           })
+        }
       }
     },
     filters: {
