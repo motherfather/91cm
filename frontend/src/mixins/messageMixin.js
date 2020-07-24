@@ -4,6 +4,7 @@ import CommonClass from '../service/common'
 let messageMixin = {
   data() {
     return {
+      translate: false,
       isFileUpload: false,
       progressValue: 0,
       sendMail: false,
@@ -51,7 +52,7 @@ let messageMixin = {
     //채널 메시지 초기화
     initMessageList: function (channel) {
       this.$store.commit('pushChannelArr',channel.id)
-      this.$store.commit('setFirstLoad',true) 
+      this.$store.commit('setFirstLoad',true)
       this.scrollHeight = 0
       this.message.sender = this.currentUser.email
       this.$store.state.isInviteMode = false
@@ -92,7 +93,7 @@ let messageMixin = {
           for (let i = 0; i < res.data.length; i++) {
             if (res.data[i].delete_yn == 'Y') {
               res.data[i].content = '<p class="deletemsg">삭제된 메세지입니다.</p>'
-            } 
+            }
             // else {
             //   res.data[i].content = CommonClass.replacemsg(res.data[i].content)
             // }
@@ -105,7 +106,6 @@ let messageMixin = {
               if (this.wrapperEl == null) {
                 this.$store.commit('setWrapperEl', document.querySelector('.c-c-wrapper'))
               }
-
               this.wrapperEl.scrollTop = this.wrapperEl.scrollHeight - this.oldScrollHeight
               this.$store.commit('setOldScrollHeight',this.wrapperEl.scrollHeight)
             })
@@ -114,8 +114,23 @@ let messageMixin = {
         }
       })
     },
+    translateMessage: async function () {
+      await this.$http.post('/api/message/translate',{
+        text: this.message.content,
+        src_lang: 'kr',
+        target_lang: 'en'
+      }).then(res=>{
+        let translateText=res.data
+        this.message.content += +translateText
+      }).catch(error =>{
+        console.error(error)
+      })
+    },
+    messageTypeCheck: function(){
+
+    },
     //채널 메시지 전송
-    sendMessage: function (e, isSysMsg) {
+    sendMessage: async function (e, isSysMsg) {
       if (e != null) {
         e.preventDefault()
       }
@@ -130,12 +145,18 @@ let messageMixin = {
         this.message.user = this.$store.state.currentUser
         this.message.message_type = 'message'
       }
+      if (this.translate) {
+        await this.translateMessage()
+        this.message.message_type = 'translate'
+      }
+
       this.message.channel_id = this.$store.state.currentChannel.id
       if (CommonClass.byteLimit(this.stringByteLength)) {
         if (this.$store.state.stompClient && this.$store.state.stompClient.connected) {
           this.$store.state.stompClient.send("/pub/chat/message", JSON.stringify(this.message), {})
           this.message.content = ''
           this.scrollToEnd(true)
+
           if (this.sendMail) {
             this.$store.state.channelUsers.filter(channelUser => channelUser != this.$store.state.currentUser)
               .forEach(channelUser => {

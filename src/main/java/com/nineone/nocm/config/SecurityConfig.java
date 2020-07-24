@@ -31,15 +31,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    
+
     @Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		
+
 		auth.userDetailsService(userService)
 			.passwordEncoder(passwordEncoder());
 
-	}	
-    
+	}
+
     @Bean
 	public CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler() {
 		return new CustomAuthenticationSuccessHandler();
@@ -60,7 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
 //                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() //개발 임시 설정
                 .antMatchers("/", "/css/**", "/js/**", "/img/**", "/login/**", "/oauth2/**", "/api/**", "/endpoint/**").permitAll()
-//                .anyRequest().authenticated()
+                .anyRequest().authenticated()
                 .and()
 //	            .cors()
 //	            .and()
