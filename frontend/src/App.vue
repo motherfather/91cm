@@ -1,6 +1,7 @@
 <template>
   <v-app data-app>
     <router-view/>
+
   </v-app>
 
 </template>
@@ -11,8 +12,8 @@ import {getGlobalMsg} from './json/msg.js'
  export default {
    name:'app',
    created(){
-      getGlobalMsg("channel.msg.leaveMsg","홍길동")   
-      getGlobalMsg("channel.msg.leaveMsg2",["홍길순","홍길동"])   
+      getGlobalMsg("channel.msg.leaveMsg","홍길동")
+      getGlobalMsg("channel.msg.leaveMsg2",["홍길순","홍길동"])
       getGlobalMsg("invite.err.existingInvite",["홍길순","홍길동"])
    }
  }

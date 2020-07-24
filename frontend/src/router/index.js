@@ -9,15 +9,21 @@ import SignUp from '../components/SignUp'
 import FormSignUp from "../views/FormSignUp";
 import Todolist from '../views/todolist/TodoList'
 import About from "../views/About";
-import Calendar from "../views/calendar/Calendar";
 import DevelopView from "../views/util/DevelopView";
 import VideoChat from "../components/VideoChat";
 import CopyRight from "../views/util/CopyRight";
-import FileDrawer from "../components/FileDrawer";
+import UserInfo from "../views/user/UserInfo";
+import AppInfo from "../views/main/AppInfo";
 
 Vue.use(VueRouter)
 
 const routes = [
+  {
+    path: '/info',
+    name: 'AppInfo',
+    component: AppInfo
+
+  },
   {
     path: '/license',
     name: 'CopyRight',
@@ -59,10 +65,12 @@ const routes = [
         && store.state.currentUser.roles.includes('ROLE_ANON')) {
         next({
           path: '/',
-          query: { msg : {
+          query: {
+            msg: {
               show: true,
               message: '가입 수락을 기다리는 중 입니다.'
-            } }
+            }
+          }
         })
       } else if (store.state.currentUser.phone != null) {
         next()
@@ -85,9 +93,11 @@ const routes = [
   {
     path: '/develop',
     component: DevelopView
-
+  },
+  {
+    path: '/test',
+    component: UserInfo
   }
-
 ]
 
 const router = new VueRouter({

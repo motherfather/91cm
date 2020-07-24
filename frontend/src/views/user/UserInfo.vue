@@ -72,19 +72,15 @@
 
   export default {
     name: 'UserInfo',
-    computed:{
+    computed: {
       ...mapGetters({
-        getCurrentUser: 'getCurrentUser'
+        getCurrentUser: 'getCurrentUser',
       })
     },
     created() {
     },
     deactivated() {
     },
-    methods: {
-      callComponent: function () {
-        this.$store.commit('getSelectComponent', 'edit')
-      }
-    }
+    methods: {}
   }
 </script>

@@ -27,7 +27,7 @@
             </a>
 
             <div class="submenu-content" v-on:mouseleave="hiddenChannelDelete()">
-              <div v-for="(channel) in channelList" :key="channel.id" v-on:mouseover="visibilityChannelDelete(channel.id)">
+              <div v-for="(channel,index) in channelList" :key="channel.id" v-on:mouseover="visibilityChannelDelete(channel.id)" @contextmenu="$refs.menu.show($event,channel)">
                 <a @click="joinChannel(channel)" @dblclick="confirmChannel($event, 'update', channel)" class="menu-item myflex" :class="{ 'active-channel': channel.id == currentChannel.id}">
                   <button class="channelDel" :id="'channelDel' + channel.id" @click="confirmChannel($event, 'delete', channel)" style="margin-left:-15px; display:flex; visibility:hidden" v-if="isAdmin()">
                     <i class="im im-minus-circle" style="font-size:15px; color:black;"></i>
@@ -48,7 +48,7 @@
               <v-badge style="margin-left: 105px" color="#bcc8d8" overlap left :content="channelUsers.length" v-if="channelUsers.length!=0"></v-badge>
             </a>
             <div class="submenu-content" v-on:mouseleave="hiddenChannelUserDelete()">
-              <a v-for="(user, index) in channelUsers" :key="user.email" style="cursor:default;display:flex; padding-left: 15px;" class="menu-item verti-align" v-on:mouseover="visibilityChannelUserDelete(index)">
+              <a v-for="(user, index) in channelUsers" :key="user.email" style="cursor:default;display:flex; padding-left: 15px;" class="menu-item verti-align" v-on:mouseover="visibilityChannelUserDelete(index)" @contextmenu="$refs.menu.show($event,user)">
                 <div v-if="user.online">
                   <v-badge bottom color="cyan lighten-1" dot offset-x="10" offset-y="10">
                     <img  class="avatar"  :src="user.picture">
@@ -75,11 +75,14 @@
         <b-form-input id="channel-input" v-model="channelTitle" @keyup="confirmChannelExec($event)" required autofocus autocomplete="off"/>
       </b-form-group>
     </b-modal>
+    <RightClickMenu ref="menu"></RightClickMenu>
   </div>
 </template>
 <script>
   import AboutChannel from '../../service/aboutchannel'
+  import RightClickMenu from "../util/RightClickMenu";
   export default {
+    components: {RightClickMenu},
     props: ['modalObj'],
     computed: {
 
