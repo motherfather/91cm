@@ -151,6 +151,10 @@
           })
         }, (e) => {
           if (!this.$store.state.isLogout) {
+            // 아직 테스트 안해봄
+             this.$_confirm('서버와의 통신이 끊겼습니다. 새로고침 하시겠습니까?',()=>{
+               location.reload(true)
+             })
             // window.location.href = "/"
           }
         })

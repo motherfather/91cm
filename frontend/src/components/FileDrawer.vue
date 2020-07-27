@@ -112,14 +112,16 @@
     mounted() {
       this.initFiles()
     },
-    activated() {
+    async activated() {
       this.$store.commit('initFileCursorPoint')
       this.$store.commit('setChannelFiles',[])
       this.fileCursorPoint.channel_id = this.currentChannel.id
-      this.$store.dispatch('loadChannelFiles', {
-            fileCursorPoint:this.fileCursorPoint,
-            isFileDrawer:true
-            })
+      while(document.documentElement.clientHeight == document.documentElement.scrollHeight){
+        await this.$store.dispatch('loadChannelFiles', {
+              fileCursorPoint:this.fileCursorPoint,
+              isFileDrawer:true
+              })  
+      }
       document.addEventListener('scroll',this.scrollCallBackFunc)
     },
     deactivated() {
