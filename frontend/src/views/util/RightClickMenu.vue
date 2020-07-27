@@ -21,18 +21,25 @@
 </template>
 
 <script>
+  import rightClickMetadata from '../../json/rightClickMenuMetadata.json'
   export default {
     name: "RightClickMenu",
     data() {
       return {
         items: [
-          {title: 'Click Me'},
-          {title: 'Click Me'},
-          {title: 'Click Me 2'},
+          {title: 'edit'},
+          {title: ''},
+          {title: ''},
         ],
         showMenu: false,
         x: 0,
         y: 0
+      }
+    },
+    created() {
+      let test = JSON.parse(rightClickMetadata)
+      for(let t : test){
+
       }
     },
     methods: {
