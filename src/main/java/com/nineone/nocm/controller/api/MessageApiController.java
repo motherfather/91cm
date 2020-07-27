@@ -37,10 +37,18 @@ public class MessageApiController {
     private RestTemplate restTemplate;
 
     @RequestMapping("/test")
-    public Map<String,String>test(@RequestBody Map<String,String> map) throws IOException {
+    public Map<String,String>test(@RequestBody Map<String,String> map) {
         String url = map.get("url");
         Map<String,String> response = new HashMap<>();
-        Document doc = Jsoup.connect(url).get();
+        Document doc=null;
+		try {
+			doc = Jsoup.connect(url).get();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
         Elements metaOg = doc.getElementsByTag("meta");
         for (Element og : metaOg){
             String property = og.attr("property");

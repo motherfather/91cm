@@ -20,7 +20,6 @@
               <div v-if="checkMsgType"
                    class="mychat-content">
                 <pre v-html="textbyFilter(msg.content)"></pre>
-
               </div>
               <div style="display:flex;align-items: flex-end;">
                 <div v-if="checkFileType" class="mychat-content">
@@ -29,7 +28,7 @@
                       <a @click="fileDownload(file)">
                         <div class="hori-align">
                           <b-img :alt="file.original_name" :src="selectImage(file)" @load="$emit('imgLoad',$event)"
-                                 style="max-width:100px"></b-img>
+                                 style="max-width:100px; max-height:100px;"></b-img>
                         </div>
                         <p class="file-name"><b>{{file.original_name}}</b></p>
                         <p style="margin:0px;">file size : {{(file.file_size /
@@ -40,9 +39,6 @@
                   </b-row>
                 </div>
                 <div v-if="msg.message_type == 'url'" class="mychat-content">
-                  <b-row>
-                    <v-img :src="og_image"></v-img>
-                  </b-row>
                 </div>
                 <span style="font-size: 11px; margin:0px 3px; width:53px; ">{{ msg.str_send_date }}</span>
                 <a class="verti-align confirmMsgDel" :id="'confirmMsgDel' + msg.id" @click="confirmDelete(msg)">
@@ -52,6 +48,17 @@
 
             </slot>
           </div>
+          <div class="msg-og-container-l" v-if="urlList.length>0">
+          <v-card class="msg-og-cardsize" @click="windowOpen()">
+              <v-img :src="urlList[0].og_image" class="msg-og-imgsize" style="height: 100px; width: 15vw;min-width: 150px;max-width: 350px;"  />  
+              
+            <v-card-text>
+              <div style="color: black;" class="txt-ellipsis">{{urlList[0].og_title}}</div>
+              <div class="txt-ellipsis">{{urlList[0].og_description}}</div>
+              </v-card-text>
+            
+          </v-card>
+        </div>
           <!-- 채팅메시지내용끝 -->
         </div>
       </div>
@@ -61,7 +68,7 @@
       <!-- flex에서 벗어나기 위해 감쌈  -->
       <div @mouseover="showMsgOption(msg.id)" @mouseleave="hideMsgOption(msg.id)">
         <!-- 채팅메세지내용 -->
-        <div class="myflex">
+        <div class="myflex msgflex-end">
           <slot name="m-content">
             <div style="display:flex;align-items: flex-end;">
               <a class="verti-align confirmMsgDel" :id="'confirmMsgDel' + msg.id" @click="confirmDelete(msg)">
@@ -73,10 +80,6 @@
             <div v-if="checkMsgType" class="my-message mychat-content">
               <pre v-html="textbyFilter(msg.content)"></pre>
             </div>
-<!--              <div>-->
-<!--                <v-img :src="urlList[0].og_image"></v-img>-->
-<!--                <v-card-title>{{urlList[0].og_title}}</v-card-title>-->
-<!--              </div>-->
             <div v-if="checkFileType" class="my-message mychat-content">
               <b-row>
                 <b-col v-for="(file,index) in msg.files" :key="index">
@@ -94,6 +97,16 @@
               </b-row>
             </div>
           </slot>
+        </div>
+        <div class="msg-og-container-r" v-if="urlList.length>0">
+          <v-card class="msg-og-cardsize" @click="windowOpen()">
+              <v-img :src="urlList[0].og_image" class="msg-og-imgsize" style="height: 100px; width: 15vw;min-width: 150px;max-width: 350px;" eager @load="$emit('imgLoad',$event)" />  
+            <v-card-text>
+              <div style="color: black;" class="txt-ellipsis">{{urlList[0].og_title}}</div>
+              <div class="txt-ellipsis">{{urlList[0].og_description}}</div>
+              </v-card-text>
+            
+          </v-card>
         </div>
         <!-- 채팅메시지내용끝 -->
       </div>
@@ -132,6 +145,9 @@
       this.makeUrlThumbnail()
     },
     methods: {
+      windowOpen:function(){
+        window.open(this.urlList[0].og_url)
+      },
       formatBytes: function (byte) {
         return CommonClass.formatBytes(byte)
       },
@@ -147,18 +163,24 @@
       textbyFilter: function (content) {
         // const tagContentRegexp = new RegExp(/<p(.*?)>(.*?)<\/p>/g);
         // const htmlTagRegexp = new RegExp(/(<([^>]+)>)/ig);
+        console.log(content,'content')
         let result = '';
         if (this.$store.state.searchText == '') {
           let arr = content.match(urlRegexp)
           if (arr != null) {
             content = '<p>' + content + '</p>'
+            arr = new Set(arr)
             arr.forEach(contentItem => {
+              
               // 아래 코드 한줄은 어떤 용도인지? 에러떠서 주석
               // contentItem = contentItem.replace(htmlTagRegexp, '')
-
               // 같은 url을 두개 넣으면 에러
-              result = "<a style='color: blue' href='" + contentItem + "' target='_blank'>" + contentItem + "</a>"
-              content = content.replace(contentItem, result)
+              result = "<a style='color: blue' href='" + contentItem + "' target='_blank'>" + 
+              contentItem + "</a>"
+              let replaceItem = contentItem.replace('?','\\?')
+              let replaceRegExp = new RegExp(replaceItem , "g");              
+              content = content.replace(replaceRegExp, result)
+              
             });
             return content
           } else {
@@ -187,16 +209,20 @@
       },
       makeUrlThumbnail: function () {
         let content = this.msg.content
-        let arr = content.match(urlRegexp)
+        if(content!=null){
+          let arr = content.match(urlRegexp)
         if (arr != null) {
           arr.forEach(urlString => {
             this.$http.post('/api/message/test', {
               url: urlString
             })
               .then(res => {
-                this.urlList.push(res.data)
+                if(Object.keys(res.data).length){
+                  this.urlList.push(res.data) 
+                }
               })
           })
+        }
         }
       }
     },
@@ -213,3 +239,28 @@
     }
   }
 </script>
+
+<style lang="scss" scoped>
+@import "@/assets/css/common.scss";
+
+.msg-og-container-r{
+    @extend .myflex;
+    @extend .msgflex-end;
+    margin-top: 5px;
+  }
+
+.msg-og-container-l{
+  margin-top: 5px;
+}
+
+.msg-og-cardsize{
+  width: 15vw;
+  min-width: 150px;
+  max-width: 350px;
+}
+.msg-og-imgsize{
+  @extend .msg-og-cardsize;
+  height: 100px; 
+}
+
+</style>

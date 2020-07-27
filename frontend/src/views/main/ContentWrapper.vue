@@ -275,6 +275,7 @@
             this.wrapperEl.scrollTop = this.wrapperEl.scrollHeight
             this.$store.commit('setFirstLoad', false)
             this.$store.commit('setOldScrollHeight', this.wrapperEl.scrollHeight);
+            this.$store.commit('setIsUpScroll',false)
           }
         })
       },
