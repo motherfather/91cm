@@ -26,7 +26,7 @@
         <!-- SELECT * FROM FILE F
         JOIN MESSAGE M
         ON F.MESSAGE_ID = M.ID
-        WHERE M.CHANNEL_ID = #{channel_id} AND M.DELETE_YN = 'N' -->
+        WHERE M.CHANNEL_ID = #{channel_id} AND M.DELETE_YN = 'N'-->
         
         
 
@@ -44,7 +44,7 @@
 		   <include refid="fileSql"/> 
 		   AND F.ID <![CDATA[<]]> #{cursorId}))
 		</if>
-      ORDER BY M.SEND_DATE DESC , M.ID DESC LIMIT 10
+      ORDER BY M.SEND_DATE DESC , M.ID DESC LIMIT 25
     </select>
     
     

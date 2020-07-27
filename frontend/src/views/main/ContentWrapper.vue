@@ -3,8 +3,8 @@
     <div class="h-inherit" v-cloak @drop.prevent="dropFile" @dragover.prevent>
       <ul class="c-c-wrapper list-unstyled" @scroll="scrollEvt">
         <div v-for="msg in msgArray" :key="msg.id">
-          <MsgBox v-if="msg.message_type=='message'|| msg.message_type=='file'" :msg="msg"
-                  @scrollToEnd="scrollToEnd"
+          <MsgBox v-if="msg.message_type=='message'|| msg.message_type=='file' || msg.message_type == 'translate'" :msg="msg"
+                  :msgPreviewBool="msgPreviewBool" @scrollToEnd="scrollToEnd"
                   @imgLoad="imgLoad"></MsgBox>
           <div v-if="msg.message_type=='action'" class="hori-align">
             <v-chip class="ma-2" style="font-weight:bold;">
@@ -28,13 +28,20 @@
         <div class="myflex-column myflex-grow">
           <div style="position: relative;display: flex;">
             <div class="mytextarea-wrapper" v-if="!$store.state.isInviteMode && !$store.state.isSearchMode">
-              <v-icon class="my-mail" v-bind:class="{'active-m': sendMail}" @click="sendMailToggle">mail</v-icon>
-              <v-icon class="my-search" @click="toggleSearchMode">find_in_page</v-icon>
-              <i class="im im-users myfile-upload" style="right: 50px;" @click="inviteToggle"></i>
-              <label for="file-input" style="display: block;margin-bottom: 0;">
-                <i class="im im-cloud-upload myfile-upload"></i>
-              </label>
-              <input id="file-input" type="file" ref="fileInput" multiple @change="attachFile" hidden/>
+              <div>
+                <v-icon class="icon-list" style="right: 130px;" v-bind:class="{'active-m': translate}"
+                        @click="translateToggle">translate
+                </v-icon>
+                <v-icon class="icon-list" style="right: 100px;" v-bind:class="{'active-m': sendMail}"
+                        @click="sendMailToggle">mail
+                </v-icon>
+                <v-icon class="icon-list" style="right: 70px;" @click="toggleSearchMode">find_in_page</v-icon>
+                <i class="icon-list im im-users" style="right: 40px;" @click="inviteToggle"></i>
+                <label for="file-input" style="display: block;margin-bottom: 0;">
+                  <i class="im im-cloud-upload icon-list" style="right: 10px;"></i>
+                </label>
+                <input id="file-input" type="file" ref="fileInput" multiple @change="attachFile" hidden/>
+              </div>
               <b-form-textarea
                 class="mytextarea"
                 autofocus
@@ -117,6 +124,7 @@
         selectedUserEmail: '',
       }
     },
+
     mounted() {
       this.$nextTick(() => {
         this.$store.commit('setWrapperEl', document.querySelector('.c-c-wrapper'))
@@ -130,7 +138,7 @@
     updated() {
       this.scrollToEnd()
     },
-    activated() {
+    activated() {``
       if (this.$store.state.oldComponent != 'main' && this.$store.state.selectComponent == 'main') {
         this.scrollToEnd(true)
       }
@@ -138,6 +146,12 @@
       this.$store.state.isSearchMode = false
     },
     methods: {
+      translateToggle: function () {
+        this.translate = !this.translate
+        if (this.translate) {
+          this.$_alert('지금부터 보내는 메시지는 번역 내용과 같이 보내집니다.')
+        }
+      },
       imgLoad(e) {
         this.$store.state.oldScrollHeight = this.wrapperEl.scrollHeight
         // 스크롤을 올리고 있을 때 이미지가 로드되어서 스크롤이 강제로 하단으로 가는 문제를 해결하기 위해 isUpScroll를 사용함.
@@ -261,6 +275,7 @@
             this.wrapperEl.scrollTop = this.wrapperEl.scrollHeight
             this.$store.commit('setFirstLoad', false)
             this.$store.commit('setOldScrollHeight', this.wrapperEl.scrollHeight);
+            this.$store.commit('setIsUpScroll',false)
           }
         })
       },

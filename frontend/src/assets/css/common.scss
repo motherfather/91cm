@@ -19,3 +19,13 @@
     align-items: center;
     justify-content: center;
 }
+
+.msgflex-end{
+    justify-content: flex-end;
+}
+
+.txt-ellipsis{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

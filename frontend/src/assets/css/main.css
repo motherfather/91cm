@@ -1,5 +1,6 @@
 @import './common.scss';
 
+
 .txtfile-inner{
     max-height: 80vh;
     max-width: 50vw;
@@ -36,9 +37,6 @@
     order: 1
 }
 
-.msgflex-end{
-    justify-content: flex-end;
-}
 
 .date-divider{
     display: flex;
@@ -59,6 +57,13 @@
 }
 .mytextarea-wrapper .active-m{
     color: #FF4848 !important;
+}
+.mytextarea-wrapper .icon-list{
+    position: absolute !important;
+    z-index: 1;
+    bottom: 5px;
+    cursor: pointer;
+    color: #2C3E50;
 }
 .mytextarea-wrapper .my-search{
     position: absolute !important;
@@ -100,13 +105,7 @@
   border: solid 1px #e6e6e6;
   flex-direction: column;
 }
-.myfile-upload{
-    position: absolute !important;
-    z-index: 1;
-    bottom: 5px;
-    right: 10px;
-    cursor: pointer;
-}
+
 .mytextarea-wrapper{
     border: 1px solid #ced4da;
     border-radius: .25rem;
