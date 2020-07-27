@@ -38,9 +38,6 @@
     },
     created() {
       let test = JSON.parse(rightClickMetadata)
-      for(let t : test){
-
-      }
     },
     methods: {
       show: function (e, item) {

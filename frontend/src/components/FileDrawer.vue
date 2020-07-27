@@ -114,6 +114,7 @@
     },
     activated() {
       this.$store.commit('initFileCursorPoint')
+      this.$store.commit('setChannelFiles',[])
       this.fileCursorPoint.channel_id = this.currentChannel.id
       this.$store.dispatch('loadChannelFiles', {
             fileCursorPoint:this.fileCursorPoint,
@@ -138,10 +139,10 @@
         }
       },
       initFiles: function () {
+        this.rows = []
+        let array = []
         if(this.channelFiles.length>0){
-          this.rows = []
           let date = this.setDateFormat(this.channelFiles[0].send_date)
-          let array = []
           this.channelFiles.forEach(file => {
             if (this.setDateFormat(file.send_date) == date) {
               array.push(file)
