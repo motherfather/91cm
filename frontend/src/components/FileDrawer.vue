@@ -112,14 +112,16 @@
     mounted() {
       this.initFiles()
     },
-    activated() {
+    async activated() {
       this.$store.commit('initFileCursorPoint')
       this.$store.commit('setChannelFiles',[])
       this.fileCursorPoint.channel_id = this.currentChannel.id
-      this.$store.dispatch('loadChannelFiles', {
-            fileCursorPoint:this.fileCursorPoint,
-            isFileDrawer:true
-            })
+      while(document.documentElement.clientHeight == document.documentElement.scrollHeight){
+        await this.$store.dispatch('loadChannelFiles', {
+              fileCursorPoint:this.fileCursorPoint,
+              isFileDrawer:true
+              })  
+      }
       document.addEventListener('scroll',this.scrollCallBackFunc)
     },
     deactivated() {
@@ -135,7 +137,7 @@
             fileCursorPoint:this.fileCursorPoint,
             isFileDrawer:true
             })
-          this.flag = true        
+          this.flag = true
         }
       },
       initFiles: function () {
@@ -170,9 +172,6 @@
           this.pages = pdf.numPages;
           this.showFile = true
         });
-      },
-      callComponent: function (componentName) {
-        this.$store.commit('getSelectComponent', componentName)
       },
       selectImage: function (file, option) {
         if (this.prevImage === undefined) {

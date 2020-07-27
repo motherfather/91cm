@@ -1,0 +1,15 @@
+{
+  "user": {
+    "directMessage": "direct_Message",
+    "info": "info"
+  },
+  "channel": {
+    "edit": "edit",
+    "delete": "delete"
+  },
+  "iconMatch": {
+    "edit": "create",
+    "info": "help",
+    "directMessage": "chat"
+  }
+}

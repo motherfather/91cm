@@ -49,16 +49,17 @@
             </slot>
           </div>
           <div class="msg-og-container-l" v-if="urlList.length>0">
-          <v-card class="msg-og-cardsize" @click="windowOpen()">
-              <v-img :src="urlList[0].og_image" class="msg-og-imgsize" style="height: 100px; width: 15vw;min-width: 150px;max-width: 350px;"  />  
-              
-            <v-card-text>
-              <div style="color: black;" class="txt-ellipsis">{{urlList[0].og_title}}</div>
-              <div class="txt-ellipsis">{{urlList[0].og_description}}</div>
+            <v-card class="msg-og-cardsize" @click="windowOpen()">
+              <v-img :src="urlList[0].og_image" class="msg-og-imgsize"
+                     style="height: 100px; width: 15vw;min-width: 150px;max-width: 350px;"/>
+
+              <v-card-text>
+                <div style="color: black;" class="txt-ellipsis">{{urlList[0].og_title}}</div>
+                <div class="txt-ellipsis">{{urlList[0].og_description}}</div>
               </v-card-text>
-            
-          </v-card>
-        </div>
+
+            </v-card>
+          </div>
           <!-- 채팅메시지내용끝 -->
         </div>
       </div>
@@ -100,12 +101,14 @@
         </div>
         <div class="msg-og-container-r" v-if="urlList.length>0">
           <v-card class="msg-og-cardsize" @click="windowOpen()">
-              <v-img :src="urlList[0].og_image" class="msg-og-imgsize" style="height: 100px; width: 15vw;min-width: 150px;max-width: 350px;" eager @load="$emit('imgLoad',$event)" />  
+            <v-img :src="urlList[0].og_image" class="msg-og-imgsize"
+                   style="height: 100px; width: 15vw;min-width: 150px;max-width: 350px;" eager
+                   @load="$emit('imgLoad',$event)"/>
             <v-card-text>
               <div style="color: black;" class="txt-ellipsis">{{urlList[0].og_title}}</div>
               <div class="txt-ellipsis">{{urlList[0].og_description}}</div>
-              </v-card-text>
-            
+            </v-card-text>
+
           </v-card>
         </div>
         <!-- 채팅메시지내용끝 -->
@@ -145,7 +148,7 @@
       this.makeUrlThumbnail()
     },
     methods: {
-      windowOpen:function(){
+      windowOpen: function () {
         window.open(this.urlList[0].og_url)
       },
       formatBytes: function (byte) {
@@ -163,7 +166,7 @@
       textbyFilter: function (content) {
         // const tagContentRegexp = new RegExp(/<p(.*?)>(.*?)<\/p>/g);
         // const htmlTagRegexp = new RegExp(/(<([^>]+)>)/ig);
-        console.log(content,'content')
+        console.log(content, 'content')
         let result = '';
         if (this.$store.state.searchText == '') {
           let arr = content.match(urlRegexp)
@@ -171,16 +174,16 @@
             content = '<p>' + content + '</p>'
             arr = new Set(arr)
             arr.forEach(contentItem => {
-              
+
               // 아래 코드 한줄은 어떤 용도인지? 에러떠서 주석
               // contentItem = contentItem.replace(htmlTagRegexp, '')
               // 같은 url을 두개 넣으면 에러
-              result = "<a style='color: blue' href='" + contentItem + "' target='_blank'>" + 
-              contentItem + "</a>"
-              let replaceItem = contentItem.replace('?','\\?')
-              let replaceRegExp = new RegExp(replaceItem , "g");              
+              result = "<a style='color: blue' href='" + contentItem + "' target='_blank'>" +
+                contentItem + "</a>"
+              let replaceItem = contentItem.replace('?', '\\?')
+              let replaceRegExp = new RegExp(replaceItem, "g");
               content = content.replace(replaceRegExp, result)
-              
+
             });
             return content
           } else {
@@ -209,20 +212,21 @@
       },
       makeUrlThumbnail: function () {
         let content = this.msg.content
-        if(content!=null){
-          let arr = content.match(urlRegexp)
+        if (content == null) {
+          return
+        }
+        let arr = content.match(urlRegexp)
         if (arr != null) {
           arr.forEach(urlString => {
             this.$http.post('/api/message/test', {
               url: urlString
             })
               .then(res => {
-                if(Object.keys(res.data).length){
-                  this.urlList.push(res.data) 
+                if (Object.keys(res.data).length) {
+                  this.urlList.push(res.data)
                 }
               })
           })
-        }
         }
       }
     },
@@ -241,26 +245,27 @@
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/css/common.scss";
+  @import "@/assets/css/common.scss";
 
-.msg-og-container-r{
+  .msg-og-container-r {
     @extend .myflex;
     @extend .msgflex-end;
     margin-top: 5px;
   }
 
-.msg-og-container-l{
-  margin-top: 5px;
-}
+  .msg-og-container-l {
+    margin-top: 5px;
+  }
 
-.msg-og-cardsize{
-  width: 15vw;
-  min-width: 150px;
-  max-width: 350px;
-}
-.msg-og-imgsize{
-  @extend .msg-og-cardsize;
-  height: 100px; 
-}
+  .msg-og-cardsize {
+    width: 15vw;
+    min-width: 150px;
+    max-width: 350px;
+  }
+
+  .msg-og-imgsize {
+    @extend .msg-og-cardsize;
+    height: 100px;
+  }
 
 </style>

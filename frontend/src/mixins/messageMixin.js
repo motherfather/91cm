@@ -69,7 +69,7 @@ let messageMixin = {
       this.$store.commit('setIsUpScroll',false)
     },
     //채널 메시지 조회
-    selectMessageList: function (channel, isInit) {
+    selectMessageList: function (channel, isInit,scrollToEnd) {
       if (isInit) {
         this.initMessageList(channel)
       }
@@ -85,7 +85,11 @@ let messageMixin = {
               if(this.cursorPoint.first){
                 this.$store.commit('setIsGetMsgForImgLoad',true)
               }else{
-                this.$store.commit('setIsGetMsgForImgLoad',false)
+                if(scrollToEnd){
+                  this.$store.commit('setIsGetMsgForImgLoad',true)
+                }else{
+                  this.$store.commit('setIsGetMsgForImgLoad',false)
+                }
               }
             this.cursorPoint.first = false
             this.cursorPoint.cursorId = res.data[res.data.length - 1].id
@@ -99,6 +103,7 @@ let messageMixin = {
             // }
           }
           this.commit('setMsgArray', res.data.reverse().concat(this.msgArray))
+          this.$store.commit('setIsGetMsgForPreview',true)
 
           if (this.wrapperEl !== undefined) {
             this.$nextTick(() => {
@@ -108,9 +113,13 @@ let messageMixin = {
               }
               this.wrapperEl.scrollTop = this.wrapperEl.scrollHeight - this.oldScrollHeight
               this.$store.commit('setOldScrollHeight',this.wrapperEl.scrollHeight)
+              // while , await관련 코드로 가능하면 바꾸기
+              if(this.wrapperEl.clientHeight == this.wrapperEl.scrollHeight){
+                this.$store.commit('setIsGetMsgForImgLoad',true)
+                this.selectMessageList(channel,false,true)
+              }
             })
           }
-          this.$store.commit('setIsGetMsgForPreview',true)
         }
       })
     },
