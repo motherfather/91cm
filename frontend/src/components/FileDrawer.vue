@@ -4,7 +4,7 @@
       <v-row justify="end">
         <v-btn icon @click="callComponent('main')"><i class="im im-x-mark"></i></v-btn>
       </v-row>
-      <div v-for="row in rows">
+      <div v-for="(row,index) in rows" :key="index">
         <div class="date-divider">
           <span class="mydate">{{setDateFormat(row[0].send_date)}}</span>
         </div>
@@ -62,7 +62,7 @@
                 </div>
               </div>
               <v-card-title style="display: inline-block;width: 100%;">
-                <a @click="fileDownload(file)" style="font-size:medium;" class="cetered-align">
+                <a id="fileName" @click="fileDownload(file)" style="font-size:medium;" class="cetered-align">
                   <i class="im im-download" style="font-size: 18px;margin-right: 5px;"/>
                   <span style="width: 100%;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{file.original_name}}</span>
                 </a>
@@ -200,6 +200,8 @@
   }
 </script>
 
-<style scoped>
-
+<style>
+#fileName {
+  color:#212529 !important;
+}
 </style>

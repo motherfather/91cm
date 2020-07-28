@@ -1,6 +1,5 @@
 @import './common.scss';
 
-
 .txtfile-inner{
     max-height: 80vh;
     max-width: 50vw;
@@ -438,13 +437,6 @@ a:focus {
     margin: 40px 0;
 }
 
-.myflex-column {
-    display: flex;
-    flex-direction: column;
-}
-.myflex-grow{
-    flex-grow: 1;
-}
 
 /* ---------------------------------------------------
     SIDEBAR STYLE

@@ -20,6 +20,11 @@ import {getGlobalMsg} from './json/msg.js'
 
 </script>
 
+<style>
+/* a {
+    color:#212121 !important;
+  } */
+</style>
 
 <style lang="scss" scoped>
 
@@ -39,6 +44,8 @@ import {getGlobalMsg} from './json/msg.js'
     padding-left: 0;
     list-style: none;
   }
+
+  
 
   #nav {
     padding: 30px;
