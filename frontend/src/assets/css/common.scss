@@ -24,8 +24,22 @@
     justify-content: flex-end;
 }
 
+
+
+.myflex-column {
+    display: flex;
+    flex-direction: column;
+}
+.myflex-grow{
+    flex-grow: 1;
+}
+
 .txt-ellipsis{
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.myflex-nowrap{
+    flex-wrap: nowrap;
 }

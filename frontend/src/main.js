@@ -47,7 +47,6 @@ Vue.config.productionTip = false
 
 new Vue({
   vuetify: new Vuetify({
-    theme: {disable: true},
     icons: {
       iconfont: "mdi"
     }

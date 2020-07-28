@@ -1,5 +1,5 @@
 <template>
-  <main class="mainwrapper" style="height: calc(100vh - 150px);overflow: auto;">
+  <main class="mainwrapper  myflex-column" style="height: calc(100vh - 150px);overflow: auto;">
     <div class="container-fluid">
       <div class="page-header">
         <div class="row align-items-end">
@@ -14,60 +14,64 @@
           </div>
         </div>
       </div>
-      <div class="row no-gutters">
-        <div class="col-lg-2 col-md-3">
+    </div>
 
-        </div>
-        <div class="col-lg-8 col-md-7">
-          <div class="card">
-            <div class="info-w verti-align">
+    <div class="myflex-column myflex-grow">
+        <div style="flex-grow: 0.5;"></div>
+        <v-row no-gutters>
+          <v-col>
+            
+              <div class="cetered-align myflex-column" >
 
-              <div class="info-wrapper cetered-align card-body">
-                <div style="margin: 20px 0px 35px;">
-                  <input type="file" hidden ref="fileInput" @change="attachFile">
-                  <div @click="fileInputClick">
-                    <img  class="icon-round"
-                           :src="user.picture" width="200" height="200">
+                <input type="file" hidden ref="fileInput" @change="attachFile">
+                <div @click="fileInputClick" style="margin-bottom:60px;">
+                  <v-img
+                    style="border-radius: 5%;"
+                    :src="user.picture" width="200" height="200"
+                  ></v-img>
+                </div>
+                
+                
+                <div>
+                  <v-text-field
+                    class="user-info-card"
+                    solo
+                    @keyup="symbolsFormatter" 
+                    name="name" 
+                    label="Name"
+                    v-model="user.name"
+                    prepend-inner-icon="mdi-account"
+                  ></v-text-field>
+
+                  <v-text-field
+                    class="user-info-card"
+                    disabled
+                    solo
+                    label="Email"
+                    v-model="user.email"
+                    prepend-inner-icon="mdi-email"
+                  ></v-text-field>
+                 
+                  <v-text-field
+                    class="user-info-card"
+                    solo
+                    label="Phone"
+                    @keyup="phoneFormatter" 
+                    name="phone"
+                    v-model="user.phone"
+                    prepend-inner-icon="mdi-cellphone"
+                  ></v-text-field>
+                  <div class="hori-align">
+                    <v-btn depressed color="primary" @click="edit" style="margin-right:10px;">수정</v-btn>
+                    <v-btn depressed color="primary" @click="callComponent('user')">취소</v-btn>
                   </div>
                 </div>
-                <table>
-                  <tbody>
-                  <tr>
-                    <th>
-                      <label for="name">이름</label>
-                    </th>
-                    <td>
-                      <b-input type="text" @keyup="symbolsFormatter" name="name" v-model="user.name"></b-input>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>
-                      <label for="email">이메일</label>
-                    </th>
-                    <td>
-                      <b-input type="email" name="email" :disabled="true" v-model="user.email"></b-input>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>
-                      <label for="phone">전화번호</label>
-                    </th>
-                    <td>
-                      <b-input type="text" @keyup="phoneFormatter" name="phone" v-model="user.phone"></b-input>
-                    </td>
-                  </tr>
-                  </tbody>
-                </table>
-                <div style="margin-top: 25px;">
-                  <b-button style="margin:15px;" variant="primary" @click="edit">수정</b-button>
-                  <b-button style="margin:15px;" variant="primary" @click="callComponent('user')">취소</b-button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+              </div>            
+          </v-col>
+        </v-row>
       </div>
-    </div>
+
+
     <b-modal
       id="modal-prevent-closing"
       ref="modal"
@@ -216,3 +220,15 @@
     }
   }
 </script>
+<style lang="scss" scoped>
+  
+
+  .user-info-card{
+    margin-bottom: 25px; 
+    width: 40vw;
+    max-width: 350px;
+    min-width: 200px;
+  }
+
+
+</style>
