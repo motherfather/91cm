@@ -1,3 +1,5 @@
+import state from "./state";
+
 export default {
   getSearchMode: state => {
     return state.isSearchMode
@@ -34,5 +36,9 @@ export default {
   getIsGetMsgForPreview : state => state.isGetMsgForPreview,
   getScrollPosition: state => state.scrollPosition,
   getIsUpScroll : state => state.isUpScroll,
-  getFileCursorPoint: state => state.fileCursorPoint
+  getFileCursorPoint: state => state.fileCursorPoint,
+  getModalTitle: state => state.modalTitle,
+  getChannelTitle: state => state.channelTitle,
+  getChannelMode: state => state.channelMode,
+  getModalTrigger: state => state.modalTrigger,
 }

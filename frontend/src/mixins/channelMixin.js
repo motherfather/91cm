@@ -4,6 +4,36 @@ import InviteService from '../service/inviteService'
 
 let channelMixin = {
   methods: {
+    // channelFormSubmit: function(){
+    //
+    // },
+    // resetModal() {
+    //   this.$store.state.modalTrigger = false
+    //   this.$store.commit('setChannelTitle','')
+    // },
+    // confirmChannelExec: function (event) {
+    //   console.log(event)
+    //   let mode = this.$store.getters.getChannelMode
+    //   if ((event.type == "keyup" && event.keyCode == 13) || event.type == "hide") {
+    //     if ($.trim(this.channelTitle) != "") {
+    //       this.$nextTick(() => {
+    //         this.$bvModal.hide('channelCU')
+    //       })
+    //
+    //       if (mode == "create") {
+    //         this.createChannel(this.channelTitle, this.$store.state.currentUser.email)
+    //       } else if (mode == "update") {
+    //         console.log(this.channelTitle)
+    //         this.$store.state.currentChannel.name = this.channelTitle
+    //         this.updateChannel(this.currentChannel)
+    //       }
+    //     }
+    //   }
+    // },
+    // updateTitle: function(event){
+    //   console.log(event)
+    //   this.$store.commit('setChannelTitle',event)
+    // },
     _makeChannelFunction: function (channel) {
       if (channel !== undefined && channel.id !== undefined) {
         let _this = this
@@ -63,7 +93,6 @@ let channelMixin = {
         try {
           if (data.message.includes('|')) {
             let splitArr = data.message.split('|')
-            console.log("~~>", splitArr)
             this[splitArr[0]](splitArr[1]);
 
           } else {
@@ -91,17 +120,16 @@ let channelMixin = {
     //채널 공통 확인
     confirmChannel: function (event, mode, channel) {
       event.stopPropagation()
-      this.modalTitle = "채널 " + this.getChannelModeKorStr(mode)
-      this.channelMode = mode
+      this.$store.commit('setModalTitle',"채널 " + this.getChannelModeKorStr(mode))
+      this.$store.commit('setChannelMode',mode)
       try {
-        this.channelTitle = (channel === undefined) ? this.currentChannel.name : channel.name
+        this.$store.commit('setChannelTitle',(channel === undefined) ? this.currentChannel.name : channel.name)
       } catch (e) {
-        this.channelTitle = ''
+        this.$store.commit('setChannelTitle','')
       }
-
       if (mode === "create" || mode === "update") {
-        if (mode === "create") this.channelTitle = ''
-        this.$bvModal.show('channelCU')
+        if (mode === "create") this.$store.commit('setChannelTitle','')
+        this.$store.commit('setModalTrigger',true)
       } else if (mode === "delete") {
         this.$_confirm("<code>[" + channel.name + "]</code>채널을 삭제하시겠습니까?", this.deleteChannel, channel);
       }

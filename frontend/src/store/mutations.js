@@ -96,6 +96,18 @@ export default {
     state.fileCursorPoint.first = true
     state.fileCursorPoint.cursorId = 0
     state.fileCursorPoint.empty = false
+  },
+  setModalTitle: function (state,payload) {
+    state.modalTitle = payload
+  },
+  setChannelTitle: function (state,payload) {
+    state.channelTitle = payload
+  },
+  setChannelMode: function (state, payload) {
+    state.channelMode = payload
+  },
+  setModalTrigger: function (state,payload) {
+    state.modalTrigger = payload
   }
 
 }

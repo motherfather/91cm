@@ -99,14 +99,14 @@
             </div>
           </slot>
         </div>
-        <div class="msg-og-container-r" v-if="urlList.length>0">
+        <div class="msg-og-container-r" v-if="getUrlList.length>0">
           <v-card class="msg-og-cardsize" @click="windowOpen()">
-            <v-img :src="urlList[0].og_image" class="msg-og-imgsize"
+            <v-img :src="getUrlList[0].og_image" class="msg-og-imgsize"
                    style="height: 100px; width: 15vw;min-width: 150px;max-width: 350px;" eager
                    @load="$emit('imgLoad',$event)"/>
             <v-card-text>
-              <div style="color: black;" class="txt-ellipsis">{{urlList[0].og_title}}</div>
-              <div class="txt-ellipsis">{{urlList[0].og_description}}</div>
+              <div style="color: black;" class="txt-ellipsis">{{getUrlList[0].og_title}}</div>
+              <div class="txt-ellipsis">{{getUrlList[0].og_description}}</div>
             </v-card-text>
 
           </v-card>
@@ -131,6 +131,13 @@
       }
     },
     computed: {
+      getUrlList: function(){
+        if (this.msg.delete_yn=='N'){
+          return this.urlList
+        }else{
+          return []
+        }
+      },
       isMsgByLoginUser: function () {
         return this.msg.sender == this.currentUser.email
       },
@@ -144,7 +151,6 @@
       },
     },
     created() {
-      console.log("MsgBox created >>>>>>>>>")
       this.makeUrlThumbnail()
     },
     methods: {

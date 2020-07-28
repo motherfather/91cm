@@ -102,7 +102,6 @@
 .info-w{
     height: 100%;
   background-color: white;
-  border: solid 1px #e6e6e6;
   flex-direction: column;
 }
 
@@ -192,7 +191,7 @@ p.file-name
     overflow: auto;
     padding: 0px;
   }
-  
+
 
 .mychat-content > p,.mychat-content > pre {
     margin:0px;

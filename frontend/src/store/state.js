@@ -66,5 +66,12 @@ export default {
   selectedUserEmail: '',
   firstLoad:true,
   scrollPosition:0,
-  isUpScroll:false
+  isUpScroll:false,
+
+
+  ////////bvModal 관련 변수 ////////////////////////////
+  modalTitle:'',
+  channelTitle: '',
+  channelMode: '',
+  modalTrigger: false,
 }

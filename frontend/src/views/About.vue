@@ -1,25 +1,95 @@
 <template>
-  <div @contextmenu="show">
-    <div>
-      <v-btn @click="test">Click</v-btn>
-    </div>
-    <v-menu
-      v-model="showMenu"
-      :position-x="x"
-      :position-y="y"
-      absolute
-      offset-y
-    >
-      <v-list>
-        <v-list-item
-          v-for="(item, index) in items"
-          :key="index"
-          @click="alert(index)"
-        >
-          <v-list-item-title>{{ item.title }}</v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-menu>
+  <div id="app">
+    <v-app id="inspire">
+      <v-row justify="center">
+        <v-col cols="12" sm="10" md="8" lg="6">
+          <v-card ref="form">
+            <v-card-text>
+              <v-text-field
+                ref="name"
+                v-model="name"
+                :rules="[() => !!name || 'This field is required']"
+                :error-messages="errorMessages"
+                label="Full Name"
+                placeholder="John Doe"
+                required
+              ></v-text-field>
+              <v-text-field
+                ref="address"
+                v-model="address"
+                :rules="[
+                () => !!address || 'This field is required',
+                () => !!address && address.length <= 25 || 'Address must be less than 25 characters',
+                addressCheck
+              ]"
+                label="Address Line"
+                placeholder="Snowy Rock Pl"
+                counter="25"
+                required
+              ></v-text-field>
+              <v-text-field
+                ref="city"
+                v-model="city"
+                :rules="[() => !!city || 'This field is required', addressCheck]"
+                label="City"
+                placeholder="El Paso"
+                required
+              ></v-text-field>
+              <v-text-field
+                ref="state"
+                v-model="state"
+                :rules="[() => !!state || 'This field is required']"
+                label="State/Province/Region"
+                required
+                placeholder="TX"
+              ></v-text-field>
+              <v-text-field
+                ref="zip"
+                v-model="zip"
+                :rules="[() => !!zip || 'This field is required']"
+                label="ZIP / Postal Code"
+                required
+                placeholder="79938"
+              ></v-text-field>
+              <v-autocomplete
+                ref="country"
+                v-model="country"
+                :rules="[() => !!country || 'This field is required']"
+                :items="countries"
+                label="Country"
+                placeholder="Select..."
+                required
+              ></v-autocomplete>
+            </v-card-text>
+            <v-divider class="mt-12"></v-divider>
+            <v-card-actions>
+              <v-btn text>Cancel</v-btn>
+              <v-spacer></v-spacer>
+              <v-slide-x-reverse-transition>
+                <v-tooltip
+                  v-if="formHasErrors"
+                  left
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      icon
+                      class="my-0"
+                      v-bind="attrs"
+                      @click="resetForm"
+                      v-on="on"
+                    >
+                      <v-icon>mdi-refresh</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Refresh form</span>
+                </v-tooltip>
+              </v-slide-x-reverse-transition>
+              <v-btn color="primary" text @click="submit">Submit</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-app>
   </div>
 </template>
 <script>
@@ -30,40 +100,60 @@
     mounted() {
 
     },
-    computed: {},
+    computed: {
+      form() {
+        return {
+          name: this.name,
+          address: this.address,
+          city: this.city,
+          state: this.state,
+          zip: this.zip,
+          country: this.country,
+        }
+      },
+    },
     data() {
       return {
-        showMenu: false,
-        text: '',
-        text2:'',
-        x: 0,
-        y: 0,
-        items: [
-          { title: 'Click Me' },
-          { title: 'Click Me' },
-          { title: 'Click Me' },
-          { title: 'Click Me 2' },
-        ],
+        errorMessages: '',
+        name: null,
+        address: null,
+        city: null,
+        state: null,
+        zip: null,
+        country: null,
+        formHasErrors: false,
       };
     },
-    watch: {},
+    watch: {
+      name() {
+        this.errorMessages = ''
+      },
+    },
     methods: {
-      show: function(e){
-        e.preventDefault()
-        this.showMenu = false
-        this.x = e.clientX
-        this.y = e.clientY
-        this.$nextTick(() => {
-          this.showMenu = true
+      addressCheck() {
+        this.errorMessages = this.address && !this.name
+          ? 'Hey! I\'m required'
+          : ''
+
+        return true
+      },
+      resetForm() {
+        this.errorMessages = []
+        this.formHasErrors = false
+
+        Object.keys(this.form).forEach(f => {
+          this.$refs[f].reset()
         })
       },
-      test: function () {
-        this.$http.post("/api/message/test",{
-          url: 'https://www.html5rocks.com/ko/tutorials/webrtc/infrastructure/'
-        }).then(res=>{
-          console.log(res)
+      submit() {
+        this.formHasErrors = false
+
+        Object.keys(this.form).forEach(f => {
+          if (!this.form[f]) this.formHasErrors = true
+
+          this.$refs[f].validate(true)
         })
-      }
+      },
     }
   }
 

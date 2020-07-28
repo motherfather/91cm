@@ -20,10 +20,10 @@
 
           </div>
           <div class="col-lg-8 col-md-7">
-            <div class="card">
+            <div>
               <div class="info-w verti-align">
 
-                <div class="info-wrapper cetered-align card-body">
+                <div class="info-wrapper cetered-align">
                   <div style="margin: 20px 0px 35px;">
                     <img class="icon-round"
                          :src="getCurrentUser.picture" width="200" height="200">
@@ -84,3 +84,8 @@
     methods: {}
   }
 </script>
+<style scoped>
+  >>>.mainwrapper{
+    background-color: white;
+  }
+</style>
