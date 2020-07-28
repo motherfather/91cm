@@ -24,7 +24,7 @@
               <div class="cetered-align myflex-column" >
                 <v-img
                   style="border-radius: 5%;"
-                  :src="getCurrentUser.picture" width="200" height="200"
+                  :src="relatedUser!=null ? relatedUser.picture : getCurrentUser.picture" width="200" height="200"
                 ></v-img>
                 <h4 style="margin: 20px 0px 20px 0;" >
                   {{relatedUser!=null ? relatedUser.name : getCurrentUser.name}}
@@ -47,7 +47,7 @@
                       </p>
                     </v-card-title>  
                   </v-card>
-                  <div class="hori-align">
+                  <div class="hori-align" v-if="relatedUser==null">
                     <v-btn depressed color="primary" @click="callComponent('edit')">수정</v-btn>
                   </div>
                 </div>
