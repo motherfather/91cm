@@ -31,23 +31,23 @@ public class NocmApplication {
                 securityConstraint.setUserConstraint("CONFIDENTIAL");
                 SecurityCollection collection = new SecurityCollection();
                 collection.addPattern("/*");
-                securityConstraint.addCollection(collection);	
+                securityConstraint.addCollection(collection);
                 context.addConstraint(securityConstraint);
             }
         };
         tomcat.addAdditionalTomcatConnectors(createSslConnector());
         return tomcat;
     }
-    
+
 //    @Bean public RequestContextListener requestContextListener(){
 //        return new RequestContextListener();
-//    } 
+//    }
 
     private Connector createSslConnector() {
         Connector connector = new Connector("org.apache.coyote.http11.Http11NioProtocol");
         connector.setScheme("http");
         connector.setSecure(false);
-        connector.setPort(9999);
+        connector.setPort(9998);
         connector.setRedirectPort(9191);
         return connector;
     }
