@@ -21,8 +21,8 @@
       </v-list>
     </v-menu>
     <v-dialog v-model="dialog" max-width="500" hide-overlay >
-      <v-row justify="end" align="end"><v-icon @click="dialog=false">close</v-icon></v-row>
-      <UserInfo style="background-color: white" v-if="itemType=='user'"></UserInfo>
+      <v-row justify="end" align="end"><v-icon @click="closeDialog">close</v-icon></v-row>
+      <UserInfo style="background-color: white" v-if="itemType=='user'" :relatedUser="item"></UserInfo>
       <ChannelInfo v-else-if="itemType=='channel'" :channel="item"></ChannelInfo>
     </v-dialog>
   </div>
@@ -54,19 +54,26 @@
     mounted() {
     },
     methods: {
+      closeDialog: function (){
+        this.dialog = false
+        this.itemType = undefined
+        this.item = undefined
+      },
       callFunction(itemName) {
         this[this.itemType + itemName](this.item)
       },
       show: function (e, item, type) {
         e.preventDefault()
         this.event = e
-        this.itemType = type
-        this.item = item
-        this.typeCheck()
+        this.itemType = undefined
+        this.item = undefined
         this.showMenu = false
         this.x = e.clientX
         this.y = e.clientY
         this.$nextTick(() => {
+          this.itemType = type
+          this.item = item
+          this.typeCheck()
           this.showMenu = true
         })
       },

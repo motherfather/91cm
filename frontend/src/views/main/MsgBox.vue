@@ -119,7 +119,7 @@
 <script>
   import CommonClass from "../../service/common";
 
-  const urlRegexp = /(http(s)?:\/\/|www.)([a-z0-9\w]+\.*)+[a-z0-9]{2,4}([\/a-z0-9-%#?&=\w])+(\.[a-z0-9]{2,4}(\?[\/a-z0-9-%#?&=\w]+)*)*/g
+  const urlRegexp = /(http(s)?:\/\/|www.)([a-z0-9\w]+\.*)+[a-z0-9]{2,4}([\:\/a-z0-9-%#?&=\w])+([\/\.a-z0-9]+(\?[\/a-z0-9-%#?&=\w]+)*)*/g
 
   export default {
     name: 'MsgBox',
@@ -184,8 +184,9 @@
               // 아래 코드 한줄은 어떤 용도인지? 에러떠서 주석
               // contentItem = contentItem.replace(htmlTagRegexp, '')
               // 같은 url을 두개 넣으면 에러
-              result = "<a style='color: blue' href='" + contentItem + "' target='_blank'>" +
+              result = "<a class='msgbox-color' href='" + contentItem + "' target='_blank'>" +
                 contentItem + "</a>"
+                console.log(contentItem,'contentItem')
               let replaceItem = contentItem.replace('?', '\\?')
               let replaceRegExp = new RegExp(replaceItem, "g");
               content = content.replace(replaceRegExp, result)
@@ -249,7 +250,14 @@
     }
   }
 </script>
-
+<style>
+.mychat-content > .row > .col> a{
+  color:#212529 !important;
+}
+.msgbox-color{
+    color:blue !important;
+}
+</style>
 <style lang="scss" scoped>
   @import "@/assets/css/common.scss";
 

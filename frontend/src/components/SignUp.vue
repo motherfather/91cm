@@ -1,12 +1,12 @@
 <template>
   <div class="bg">
-    <div class="container">
+    <div class="container" style="padding:0;">
       <div class="row">
         <!--   이메일, 이름, 핸드폰 번호 규격에 맞는지 확인 하는 정규식 추후에 추가     -->
         <div class="col-md-12 min-vh-100 d-flex flex-column justify-content-center">
           <div class="row">
-            <div class="col-lg-6 col-md-8 mx-auto">
-              <div class="card rounded shadow shadow-sm mainbox">
+            <div class="col-lg-6 col-md-8 mx-auto verti-align" >
+              <div class="card rounded shadow shadow-sm mainbox" style="height: fit-content;">
                 <div class="card-header">
                   <h5>91cm를 사용하기 위해 추가적으로 필요한 정보를 입력해주세요</h5>
                 </div>
@@ -140,6 +140,8 @@
 </script>
 <style>
   .bg {
-    background-image: url("../assets/images/laptop.jpg");
+    /* 사진이 짤려서 나와서 임시 주석처리 */
+    /* background-image: url("../assets/images/laptop.jpg"); */
+    background-color: #e6e6e6;
   }
 </style>

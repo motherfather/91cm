@@ -129,7 +129,6 @@ public class UserApiController {
     }
     @RequestMapping(value = "/check", method = RequestMethod.POST)
     public boolean emailChecker(@RequestBody User user){
-        log.info(user.getEmail());
         return userService.emailCheck(user.getEmail());
     }
 

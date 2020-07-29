@@ -44,7 +44,7 @@
 		   <include refid="fileSql"/>
 		   AND F.ID <![CDATA[<]]> #{cursorId}))
 		</if>
-      ORDER BY M.SEND_DATE DESC , M.ID DESC LIMIT 30
+      ORDER BY M.SEND_DATE DESC , M.ID DESC LIMIT 5
     </select>
 
 

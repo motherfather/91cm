@@ -4,36 +4,6 @@ import InviteService from '../service/inviteService'
 
 let channelMixin = {
   methods: {
-    // channelFormSubmit: function(){
-    //
-    // },
-    // resetModal() {
-    //   this.$store.state.modalTrigger = false
-    //   this.$store.commit('setChannelTitle','')
-    // },
-    // confirmChannelExec: function (event) {
-    //   console.log(event)
-    //   let mode = this.$store.getters.getChannelMode
-    //   if ((event.type == "keyup" && event.keyCode == 13) || event.type == "hide") {
-    //     if ($.trim(this.channelTitle) != "") {
-    //       this.$nextTick(() => {
-    //         this.$bvModal.hide('channelCU')
-    //       })
-    //
-    //       if (mode == "create") {
-    //         this.createChannel(this.channelTitle, this.$store.state.currentUser.email)
-    //       } else if (mode == "update") {
-    //         console.log(this.channelTitle)
-    //         this.$store.state.currentChannel.name = this.channelTitle
-    //         this.updateChannel(this.currentChannel)
-    //       }
-    //     }
-    //   }
-    // },
-    // updateTitle: function(event){
-    //   console.log(event)
-    //   this.$store.commit('setChannelTitle',event)
-    // },
     _makeChannelFunction: function (channel) {
       if (channel !== undefined && channel.id !== undefined) {
         let _this = this

@@ -11,6 +11,7 @@
     <select id="channelList" resultType="com.nineone.nocm.domain.Channel">
         SELECT CN.ID
              , CN.NAME
+             , CN.REGISTER_DATE
              , IFNULL(CNT.COUNT, 0) AS COUNT
           FROM CHANNEL AS CN
 
