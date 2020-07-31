@@ -18,13 +18,20 @@ public class CustomAuthenticationSuccessHandler extends  SavedRequestAwareAuthen
 	@Autowired
 	private UserRepository userRepository;
 	
+	 public CustomAuthenticationSuccessHandler(String defaultTargetUrl) {
+	        setDefaultTargetUrl(defaultTargetUrl);
+	 }
+	
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException, ServletException {
-		User user = userRepository.getUserfindByEmail(request.getParameter("email"));
-		user.setPassword(null);
-		HttpSession session = request.getSession();
-		session.setAttribute("user", user);
+		System.out.println("뭔데 이상한 곳으로 리다이렉션되냐구");
+		if(request.getParameter("email")!=null) {
+			User user = userRepository.getUserfindByEmail(request.getParameter("email"));
+			user.setPassword(null);
+			HttpSession session = request.getSession();
+			session.setAttribute("user", user);
+		}
 		getRedirectStrategy().sendRedirect(request, response, "/main");
 	}
-}
+} 

@@ -46,7 +46,7 @@ public class MessageApiController {
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 			return null;
 		}
         Elements metaOg = doc.getElementsByTag("meta");
