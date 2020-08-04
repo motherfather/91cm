@@ -167,18 +167,45 @@
         </p>
       </b-card>
     </b-collapse>
+    <b-button class="button-margin" v-b-toggle.collapse-open6 variant="outline-dark" block>vuetify
+    </b-button>
+    <b-collapse id="collapse-open6" class="mt-2">
+      <b-card>
+        <span>link :</span>
+        <b-link href="https://github.com/saintplay/vue-swatches" style="color: blue;">
+          https://github.com/vuetifyjs/vuetify/blob/master/LICENSE.md
+        </b-link>
+        <pre>The MIT License (MIT)
+
+Copyright (c) 2016-2020 John Jeremy Leider
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+        </pre>
+      </b-card>
+    </b-collapse>
   </v-container>
 </template>
 <script>
-  export default {
-    name: 'CopyRight',
-    data() {
-      return {}
-    },
-  }
+export default {
+  name: 'CopyRight',
+  data() {
+    return {}
+  },
+}
 </script>
 <style scope>
-  .button-margin {
-    margin-bottom: 10px;
-  }
+.button-margin {
+  margin-bottom: 10px;
+}
+pre{
+  white-space: pre-wrap;       /* Since CSS 2.1 */
+  white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+  white-space: -pre-wrap;      /* Opera 4-6 */
+  white-space: -o-pre-wrap;    /* Opera 7 */
+  word-wrap: break-word;
+}
 </style>
