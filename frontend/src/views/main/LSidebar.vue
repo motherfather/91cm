@@ -191,7 +191,6 @@
         }
       },
       test: function () {
-        console.log("test")
       },
       activeBlock: function () {
         this.$nextTick(function () {

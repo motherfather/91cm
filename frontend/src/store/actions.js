@@ -6,15 +6,13 @@ export default {
 
   loadChannelFiles: async function (context, {fileCursorPoint,isFileDrawer}) {
     await axios.post('/api/file/get/files', fileCursorPoint).then(res => {
-      let files = res.data 
-      console.log(files,'files')
+      let files = res.data
       if(isFileDrawer){
         if(files.length == 0 ){
-          context.state.fileCursorPoint.empty = true  
+          context.state.fileCursorPoint.empty = true
         }
         context.state.fileCursorPoint.first = false
         context.state.fileCursorPoint.cursorId = files[files.length - 1].id
-        console.log(context.state.fileCursorPoint,'context.state.fileCursorPoint')
       }
       context.commit('setChannelFiles', context.state.channelFiles.concat(files))
     }).catch(error => {

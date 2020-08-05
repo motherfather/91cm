@@ -182,10 +182,10 @@
         that.$emit('left-room', stream.streamid);
       };
       this.rtcmConnection.onUserStatusChanged = function (event) {
-        console.log(event.status)
+        // console.log(event.status)
       }
       this.rtcmConnection.onPeerStateChanged = function (state) {
-        console.log(state)
+        // console.log(state)
       }
       // this.rtcmConnection.checkPresence(this.roomId, function (isRoomExist, roomid, error) {
       //   console.log("checkPresence : ",isRoomExist, roomid, error)
@@ -200,7 +200,6 @@
     methods: {
       onResize() {
         this.windowSize = {x: window.innerWidth, y: window.innerHeight}
-        console.log(this.windowSize)
       },
       join() {
         var that = this;
@@ -211,7 +210,6 @@
 
           that.rtcmConnection.socket.on('disconnect', function (message) {
             // alert(message)
-            console.log('socket disconnect : '+message)
             that.join()
           })
         });
@@ -249,7 +247,7 @@
           }
 
           function getDisplayMediaError(error) {
-            console.log('Media error: ' + JSON.stringify(error));
+            // console.log('Media error: ' + JSON.stringify(error));
           }
 
           if (navigator.mediaDevices.getDisplayMedia) {

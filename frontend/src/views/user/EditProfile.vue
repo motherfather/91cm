@@ -123,7 +123,6 @@ export default {
   },
   methods: {
     showSnackBar: function (e){
-      console.log(e)
       this.alertMessage = '이메일은 변경하실 수 없습니다.'
       this.snackBar = true
     },

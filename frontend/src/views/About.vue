@@ -34,10 +34,8 @@
       test:function (e){
         this.$refs.row.classList.add('animate__animated','animate__fadeIn')
         this.$refs.row.addEventListener('animationend', e=>{
-          console.log(e)
           this.$refs.row.classList.remove('animate__animated','animate__fadeIn')
           this.$refs.row.removeEventListener('animationend', e=>{
-            console.log(e)
           })
         })
         this.index = this.values(e.deltaY)

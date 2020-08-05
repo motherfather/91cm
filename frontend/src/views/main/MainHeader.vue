@@ -89,7 +89,6 @@
         this.$http.get('/api/invite/list')
           .then(res => {
             this.alarmList = res.data.reverse()
-            console.log(this.alarmList, "invite list")
           })
           .catch(error => {
           })
@@ -104,8 +103,6 @@
         if($('.main-content').hasClass('rsidebar-padding-right')){
           $('.main-content').removeClass('rsidebar-padding-right')
         }else{
-          console.log(this,'this')
-          console.log(this.fileCursorPoint,'this.fileCursorPoint')
           $('.main-content').addClass('rsidebar-padding-right')
         }
         return false;
@@ -128,7 +125,6 @@
       }
       ,
       getUserNameByEmail: function (email) {
-        console.log(this.$store.state.userList,'userList')
         let foundEmail = this.$store.state.userList.find(element => {return element.email == email})
         if(foundEmail!=null){
           return foundEmail.name

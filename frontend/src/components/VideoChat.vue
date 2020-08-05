@@ -45,7 +45,6 @@
 
     },
     beforeDestroy() {
-      console.log("videoChat beforeDestroy")
       this.$refs.webrtc.leave();
     },
     methods: {
@@ -62,10 +61,8 @@
         this.img = this.$refs.webrtc.shareScreen();
       },
       onError(error, stream) {
-        console.log('On Error Event', error, stream);
       },
       logEvent(event) {
-        console.log('Event : ', event);
       },
     }
   }

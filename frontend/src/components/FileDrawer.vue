@@ -116,12 +116,11 @@
       this.$store.commit('initFileCursorPoint')
       await this.$store.commit('setChannelFiles',[])
       this.fileCursorPoint.channel_id = this.currentChannel.id
-      console.log('?!')
-      while(document.documentElement.clientHeight == document.documentElement.scrollHeight){  
+      while(document.documentElement.clientHeight == document.documentElement.scrollHeight){
         await this.$store.dispatch('loadChannelFiles', {
               fileCursorPoint:this.fileCursorPoint,
               isFileDrawer:true
-        })  
+        })
       }
       document.addEventListener('scroll',this.scrollCallBackFunc)
     },

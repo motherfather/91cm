@@ -263,7 +263,6 @@ let channelMixin = {
               this.$store.state.isInviteMode = !this.$store.state.isInviteMode
             }).catch(error => {
               let alertmsg = ''
-              console.log(error, 'error')
               if (error.response.data.list != null) {
                 const alertList = error.response.data.list
                 for (let i = 0; i < alertList.length; i++) {

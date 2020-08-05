@@ -172,7 +172,6 @@
       textbyFilter: function (content) {
         // const tagContentRegexp = new RegExp(/<p(.*?)>(.*?)<\/p>/g);
         // const htmlTagRegexp = new RegExp(/(<([^>]+)>)/ig);
-        console.log(content, 'content')
         let result = '';
         if (this.$store.state.searchText == '') {
           let arr = content.match(urlRegexp)
