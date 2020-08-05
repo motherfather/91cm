@@ -51,7 +51,8 @@
               <a v-if="false" class="dropdown-item" @click="$router.push('/develop')"><i class="ik ik-settings dropdown-icon"></i> Setting</a>
 <!--              <a class="dropdown-item"><i class="ik ik-info dropdown-icon"></i> About</a>-->
               <a class="dropdown-item" v-if="isAdmin()" @click="callComponent('admin')"><i class="ik ik-settings dropdown-icon"></i> Permission</a>
-              <a class="dropdown-item" @click="$router.push('/info')"><i class="ik ik-info dropdown-icon"></i> Info</a>
+              <!-- info 페이지가 완성되면 if 처리 제거 -->
+              <a class="dropdown-item" v-if="false" @click="$router.push('/info')"><i class="ik ik-info dropdown-icon"></i> Info</a>
               <a class="dropdown-item" @click="SignOut"><i class="ik ik-power dropdown-icon"></i> Logout</a>
             </div>
           </div>

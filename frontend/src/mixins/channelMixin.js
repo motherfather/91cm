@@ -50,13 +50,15 @@ let channelMixin = {
             })
           }
 
-          if (!this.$store.state.isfocus) {
+          if (!this.$store.state.isfocus && data.message_type!='date') {
             this.msgCountUpdate(data.channel_id, true)
           } else {
             this.currentChannel.access()
           }
         } else {
-          this.msgCountUpdate(data.channel_id, true)
+          if(data.message_type!='date'){
+            this.msgCountUpdate(data.channel_id, true)
+          }
         }
       } else {
         //메시지가 함수명일때 함수를 call하는 구문

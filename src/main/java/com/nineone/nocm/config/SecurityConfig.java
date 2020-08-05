@@ -42,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
 	public CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler() {
-		return new CustomAuthenticationSuccessHandler();
+		return new CustomAuthenticationSuccessHandler("/main");
 	}
 
     @Override
@@ -80,6 +80,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.and()
                 .oauth2Login()
                 .defaultSuccessUrl("/main")
+                .successHandler(customAuthenticationSuccessHandler())
                 .loginPage("/")
                 .userInfoEndpoint().userService(customOAuthUserService);
 

@@ -27,7 +27,7 @@
              INNER JOIN MESSAGE MSG
                      ON MSG.CHANNEL_ID = JI2.CHANNEL_ID
                     AND MSG.SEND_DATE > JI2.LAST_ACCESS_DATE
-
+		      WHERE MSG.MESSAGE_TYPE != 'DATE'
               GROUP BY JI2.CHANNEL_ID,
                        JI2.MEMBER_EMAIL
              ) AS CNT

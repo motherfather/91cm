@@ -114,7 +114,7 @@ let messageMixin = {
               this.wrapperEl.scrollTop = this.wrapperEl.scrollHeight - this.oldScrollHeight
               this.$store.commit('setOldScrollHeight',this.wrapperEl.scrollHeight)
               // while , await관련 코드로 가능하면 바꾸기
-              if(this.wrapperEl.clientHeight == this.wrapperEl.scrollHeight){
+              if(this.wrapperEl.clientHeight == this.wrapperEl.scrollHeight && !this.cursorPoint.empty){
                 this.$store.commit('setIsGetMsgForImgLoad',true)
                 this.selectMessageList(channel,false,true)
               }

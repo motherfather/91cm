@@ -7,15 +7,16 @@
       absolute
       offset-y
     >
-      <v-list>
+      <v-list dense>
         <v-list-item
           v-for="(item, index) in menuList"
           :key="index"
-          @click="callFunction(item)"
+          v-if="authorityCheck(item.auth)"
+          @click="callFunction(item.text)"
         >
           <v-list-item-title>
-            <v-icon>{{ iconMatch[item]}}</v-icon>
-            {{ item }}
+            <v-icon>{{ iconMatch[item.text]}}</v-icon>
+            {{ item.text }}
           </v-list-item-title>
         </v-list-item>
       </v-list>
@@ -54,6 +55,14 @@
     mounted() {
     },
     methods: {
+      authorityCheck: function (auth){
+        if (auth =='user'){
+          return this.currentUser.roles.includes('ROLE_USER') || this.isAdmin()
+        }
+        if (auth == 'admin'){
+          return this.isAdmin()
+        }
+      },
       closeDialog: function (){
         this.dialog = false
         this.itemType = undefined

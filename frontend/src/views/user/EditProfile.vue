@@ -17,61 +17,60 @@
     </div>
 
     <div class="myflex-column myflex-grow">
-        <div style="flex-grow: 0.5;"></div>
-        <v-row no-gutters>
-          <v-col>
+      <div style="flex-grow: 0.5;"></div>
+      <v-row no-gutters>
+        <v-col>
+          <div class="cetered-align myflex-column">
+            <input type="file" hidden ref="fileInput" @change="attachFile">
+            <div @click="fileInputClick" style="margin-bottom:60px;">
+              <v-img
+                style="border-radius: 5%;"
+                :src="user.picture" width="200" height="200"
+              ></v-img>
+            </div>
+            <div>
+              <v-text-field
+                class="user-info-card"
+                solo
+                @keyup="symbolsFormatter"
+                name="name"
+                label="Name"
+                v-model="user.name"
+                prepend-inner-icon="mdi-account"
+                autocomplete="off"
+              ></v-text-field>
 
-              <div class="cetered-align myflex-column" >
+              <v-text-field
+                @focus="showSnackBar"
+                class="user-info-card"
+                readonly
+                solo
+                label="Email"
+                v-model="user.email"
+                prepend-inner-icon="mdi-email"
+              ></v-text-field>
 
-                <input type="file" hidden ref="fileInput" @change="attachFile">
-                <div @click="fileInputClick" style="margin-bottom:60px;">
-                  <v-img
-                    style="border-radius: 5%;"
-                    :src="user.picture" width="200" height="200"
-                  ></v-img>
-                </div>
-
-
-                <div>
-                  <v-text-field
-                    class="user-info-card"
-                    solo
-                    @keyup="symbolsFormatter"
-                    name="name"
-                    label="Name"
-                    v-model="user.name"
-                    prepend-inner-icon="mdi-account"
-                  ></v-text-field>
-
-                  <v-text-field
-                    class="user-info-card"
-                    disabled
-                    solo
-                    label="Email"
-                    v-model="user.email"
-                    prepend-inner-icon="mdi-email"
-                  ></v-text-field>
-
-                  <v-text-field
-                    class="user-info-card"
-                    solo
-                    label="Phone"
-                    @keyup="phoneFormatter"
-                    name="phone"
-                    v-model="user.phone"
-                    prepend-inner-icon="mdi-cellphone"
-                  ></v-text-field>
-                  <div class="hori-align">
-                    <v-btn depressed color="primary" @click="edit" style="margin-right:10px;">수정</v-btn>
-                    <v-btn depressed color="primary" @click="callComponent('user')">취소</v-btn>
-                  </div>
-                </div>
+              <v-text-field
+                class="user-info-card"
+                solo
+                label="Phone"
+                @keyup="phoneFormatter"
+                name="phone"
+                v-model="user.phone"
+                prepend-inner-icon="mdi-cellphone"
+                autocomplete="off"
+              ></v-text-field>
+              <div class="hori-align">
+                <v-btn depressed color="primary" @click="edit" style="margin-right:10px;">수정</v-btn>
+                <v-btn depressed color="primary" @click="callComponent('user')">취소</v-btn>
               </div>
-          </v-col>
-        </v-row>
-      </div>
+            </div>
+          </div>
+        </v-col>
+      </v-row>
+    </div>
 
-
+    <!-- 아래 b-modal 사용하는지 확인 필요 -->
     <b-modal
       id="modal-prevent-closing"
       ref="modal"
@@ -96,138 +95,152 @@
         </b-form-group>
       </form>
     </b-modal>
+    <v-snackbar v-model="snackBar"
+                absolute right bottom style="padding-left: 5px">
+      {{alertMessage}}
+      <v-btn icon color="white" @click="snackBar= false">
+        <v-icon>close</v-icon>
+      </v-btn>
+    </v-snackbar>
   </main>
 </template>
 <script>
-  // 이름 길이 제한 및 핸드폰 번호 정규식 추가 예정
-  export default {
-    name: 'EditUser',
-    data() {
-      return {
-        imageForm: null,
-        imageUrl: '',
-        nameState: null,
-        user: {}
+// 이름 길이 제한 및 핸드폰 번호 정규식 추가 예정
+export default {
+  name: 'EditUser',
+  data() {
+    return {
+      alertMessage: 'test',
+      snackBar: false,
+      imageForm: null,
+      imageUrl: '',
+      nameState: null,
+      user: {}
+    }
+  },
+  activated() {
+    this.user = Object.assign({}, this.$store.state.currentUser)
+  },
+  methods: {
+    showSnackBar: function (e){
+      console.log(e)
+      this.alertMessage = '이메일은 변경하실 수 없습니다.'
+      this.snackBar = true
+    },
+    addFile: function (uploadFiles) {
+      const maxUploadSize = 100 * 1024 * 1024;
+      if (uploadFiles[0] == null) {
+        return;
       }
+      if (uploadFiles[0].size >= maxUploadSize) {
+        this.$_alert('한번에 보낼 수 있는 파일 용량은 100MB 입니다.')
+        return;
+      }
+      this.imageForm = new FormData();
+      this.imageForm.append('file', uploadFiles[0])
+      const url = window.URL.createObjectURL(uploadFiles[0])
+      this.user.picture = url
     },
-    activated() {
-      this.user=Object.assign({}, this.$store.state.currentUser)
+    attachFile: function (e) {
+      this.addFile(e.target.files)
+      this.$refs.fileInput.value = null
     },
-    methods: {
-      addFile: function (uploadFiles) {
-        const maxUploadSize = 100 * 1024 * 1024;
-        if (uploadFiles[0] == null) {
-          return;
-        }
-        if (uploadFiles[0].size >= maxUploadSize) {
-          this.$_alert('한번에 보낼 수 있는 파일 용량은 100MB 입니다.')
-          return;
-        }
-        this.imageForm = new FormData();
-        this.imageForm.append('file', uploadFiles[0])
-        const url = window.URL.createObjectURL(uploadFiles[0])
-        this.user.picture = url
-      },
-      attachFile: function (e) {
-        this.addFile(e.target.files)
-        this.$refs.fileInput.value = null
-      },
-      fileInputClick() {
-        this.$refs.fileInput.click()
-      },
-      handleOk: function (bvModalEvt) {
-        bvModalEvt.preventDefault()
-        this.handleSubmit()
-      },
-      handleSubmit: function () {
-        if (!this.checkFormValidity) {
-          // 추후 url 주소 정규식 검사 추가
-          return
-        }
-        this.user.picture = this.imageUrl
-        this.$nextTick(() => {
-          this.$bvModal.hide('modal-prevent-closing')
+    fileInputClick() {
+      this.$refs.fileInput.click()
+    },
+    handleOk: function (bvModalEvt) {
+      bvModalEvt.preventDefault()
+      this.handleSubmit()
+    },
+    handleSubmit: function () {
+      if (!this.checkFormValidity) {
+        // 추후 url 주소 정규식 검사 추가
+        return
+      }
+      this.user.picture = this.imageUrl
+      this.$nextTick(() => {
+        this.$bvModal.hide('modal-prevent-closing')
+      })
+    },
+    checkFormValidity: function () {
+      const valid = this.$refs.form.checkValidity()
+      this.nameState = valid
+      return valid
+    },
+    resetModal: function () {
+      this.imageUrl = ''
+    },
+    edit: function () {
+      if (!this.valueCheck(this.user.email, this.user.name, this.user.phone)) {
+        return;
+      }
+      this.$http.post('/api/user/update', this.user)
+        .then(res => {
+          if (res.data) {
+            this.$http.post('/api/file/upload/user/image', this.imageForm, {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }).then(res => {
+              this.$store.state.currentUser.picture = res.data
+            }).catch(error => {
+              this.$_error('이미지 파일만 업로드 할 수 있습니다.')
+            })
+            this.$store.state.stompClient.send('/pub/sync/info', null, {})
+            this.$store.dispatch('initCurrentUser')
+            this.$store.commit('getSelectComponent', 'user')
+          }
         })
-      },
-      checkFormValidity: function () {
-        const valid = this.$refs.form.checkValidity()
-        this.nameState = valid
-        return valid
-      },
-      resetModal: function () {
-        this.imageUrl = ''
-      },
-      edit: function () {
-        if (!this.valueCheck(this.user.email, this.user.name, this.user.phone)) {
-          return;
-        }
-        this.$http.post('/api/user/update', this.user)
-          .then(res => {
-            if (res.data) {
-              this.$http.post('/api/file/upload/user/image', this.imageForm, {
-                headers: {
-                  'Content-Type': 'multipart/form-data'
-                }
-              }).then(res => {
-                this.$store.state.currentUser.picture = res.data
-              }).catch(error => {
-                this.$_error( '이미지 파일만 업로드 할 수 있습니다.')
-              })
-              this.$store.state.stompClient.send('/pub/sync/info', null, {})
-              this.$store.dispatch('initCurrentUser')
-              this.$store.commit('getSelectComponent', 'user')
-            }
-          })
 
-      },
-      phoneFormatter: function () {
-        this.user.phone = this.user.phone.replace(/[^0-9]/g, "") // 숫자만 추출 되도록하는 정규식
-        this.user.phone = this.user.phone.replace(/(^02.{0}|^01.{1}|[0-9]{4})([0-9]+)([0-9]{4})/, "$1-$2-$3");// 휴대폰번호 자동 하이픈 넣어주는 정규식
-      },
-      symbolsFormatter: function () {
-        this.user.name = this.user.name.replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-+<>@\#$%&\\\=\(\'\"]/gi, "")
-      },
+    },
+    phoneFormatter: function () {
+      this.user.phone = this.user.phone.replace(/[^0-9]/g, "") // 숫자만 추출 되도록하는 정규식
+      this.user.phone = this.user.phone.replace(/(^02.{0}|^01.{1}|[0-9]{4})([0-9]+)([0-9]{4})/, "$1-$2-$3");// 휴대폰번호 자동 하이픈 넣어주는 정규식
+    },
+    symbolsFormatter: function () {
+      this.user.name = this.user.name.replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-+<>@\#$%&\\\=\(\'\"]/gi, "")
+    },
 
-      valueCheck: function (email, name, phone) {
-        const phoneRegex = '^01(?:0|1|[6-9])[-]?(\\d{3}|\\d{4})[-]?(\\d{4})$'
-        // const symbolsRegex = '/[~!@#$%^&*()_+|<>?:{}]/'
-        // if (!name.match(symbolsRegex)){
-        //   this.$alertModal('error','이름에는 특수기호가 들어갈 수 없습니다')
-        //   return false
-        // }
-        if (email == null || email == '') {
-          this.$_error('이메일을 입력해주세요')
-          return false
-        }
-        if (name == null || name == '') {
-          this.$_error( '이름을 입력해주세요')
-          return false
-        }
-        if (name.length > 20) {
-          this.$_error( '이름이 너무 깁니다.')
-          return false
-        }
-        if (phone == null || phone == '') {
-          this.$_error('핸드폰 번호를 입력해주세요')
-          return false
-        }
-        if (!phone.match(phoneRegex)) {
-          this.$_error('핸드폰 번호가 형식에 맞지 않습니다')
-          return false
-        }
-        return true
+    valueCheck: function (email, name, phone) {
+      const phoneRegex = '^01(?:0|1|[6-9])[-]?(\\d{3}|\\d{4})[-]?(\\d{4})$'
+      // const symbolsRegex = '/[~!@#$%^&*()_+|<>?:{}]/'
+      // if (!name.match(symbolsRegex)){
+      //   this.$alertModal('error','이름에는 특수기호가 들어갈 수 없습니다')
+      //   return false
+      // }
+      if (email == null || email == '') {
+        this.$_error('이메일을 입력해주세요')
+        return false
       }
+      if (name == null || name == '') {
+        this.$_error('이름을 입력해주세요')
+        return false
+      }
+      if (name.length > 20) {
+        this.$_error('이름이 너무 깁니다.')
+        return false
+      }
+      if (phone == null || phone == '') {
+        this.$_error('핸드폰 번호를 입력해주세요')
+        return false
+      }
+      if (!phone.match(phoneRegex)) {
+        this.$_error('핸드폰 번호가 형식에 맞지 않습니다')
+        return false
+      }
+      return true
     }
   }
+}
 </script>
 <style lang="scss" scoped>
 
-  .user-info-card{
-    margin-bottom: 25px;
-    width: 40vw;
-    max-width: 350px;
-    min-width: 200px;
-  }
+.user-info-card {
+  margin-bottom: 25px;
+  width: 40vw;
+  max-width: 350px;
+  min-width: 200px;
+}
 
 
 </style>

@@ -14,7 +14,6 @@ import VideoChat from "../components/VideoChat";
 import CopyRight from "../views/util/CopyRight";
 import UserInfo from "../views/user/UserInfo";
 import AppInfo from "../views/main/AppInfo";
-
 Vue.use(VueRouter)
 
 const routes = [
