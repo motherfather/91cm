@@ -99,7 +99,6 @@
           <v-text-field label="채널 이름" ref="channelName" required :value="channelTitle"
                         @input="updateTitle($event)"
                         counter="20"
-                        @focusout="valueCheck"
                         @keydown.enter.exact="channelFormSubmit"
                         :error-messages="errorMsg" autocomplete="off"></v-text-field>
         </v-card-title>
@@ -158,7 +157,7 @@
       },
       resetModal() {
         this.$store.commit('setModalTrigger', false)
-        this.$store.commit('setChannelTitle', '')
+        this.$store.commit('setChannelTitle', null)
         this.errorMsg = null
       },
       confirmChannelExec: function (event) {
@@ -178,8 +177,8 @@
         }
       },
       updateTitle: function (event) {
-        this.valueCheck()
         this.$store.commit('setChannelTitle', event)
+        this.valueCheck()
       },
       valueCheck: function () {
         if (this.channelTitle == '' || this.channelTitle == null) {
@@ -189,8 +188,6 @@
         } else {
           this.errorMsg = null
         }
-      },
-      test: function () {
       },
       activeBlock: function () {
         this.$nextTick(function () {
