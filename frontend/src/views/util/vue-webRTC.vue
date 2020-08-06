@@ -113,9 +113,9 @@
       this.rtcmConnection = new RTCMultiConnection();
       this.rtcmConnection.socketURL = this.socketURL;
       this.rtcmConnection.iceServers = [];
-      this.rtcmConnection.iceServers.push({
-        urls: 'stun:stun4.l.google.com:19302'
-      });
+      // this.rtcmConnection.iceServers.push({
+      //   urls: 'stun:stun4.l.google.com:19302'
+      // });
       this.rtcmConnection.iceServers.push({
         url: 'turn:numb.viagenie.ca',
         credential: 'muazkh',
