@@ -111,6 +111,14 @@
     },
     mounted() {
       this.initFiles()
+      window.addEventListener('resize',async ()=>{
+        while(document.documentElement.clientHeight == document.documentElement.scrollHeight){
+          await this.$store.dispatch('loadChannelFiles', {
+            fileCursorPoint:this.fileCursorPoint,
+            isFileDrawer:true
+          })
+        }
+      })
     },
     async activated() {
       this.$store.commit('initFileCursorPoint')

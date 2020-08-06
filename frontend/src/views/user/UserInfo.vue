@@ -31,7 +31,7 @@
                   </h4>
                 <!-- <span style="color: #afb5c1;margin-bottom:20px;">부서(IT사업본부) 직급(사원)</span> -->
                 <div>
-                  <v-card class="user-info-card">
+                  <v-card class="user-info-card" >
                     <v-card-title class="myflex myflex-nowrap">
                       <v-icon style="display: flex;margin-right: 20px;">mail</v-icon>
                       <p class ="myflex-grow txt-ellipsis" style="margin: 0;">
