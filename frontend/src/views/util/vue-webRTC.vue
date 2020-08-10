@@ -117,9 +117,9 @@
       //   urls: 'stun:stun4.l.google.com:19302'
       // });
       this.rtcmConnection.iceServers.push({
-        url: 'turn:numb.viagenie.ca',
-        credential: 'muazkh',
-        username: 'webrtc@live.com'
+        url: 'turn:ithkoo.com:3478',
+        credential: 'hkoo',
+        username: 'hkoo'
       });
 
       // this.rtcmConnection.iceProtocols = {
