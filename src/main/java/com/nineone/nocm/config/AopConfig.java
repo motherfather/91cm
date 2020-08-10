@@ -2,6 +2,7 @@ package com.nineone.nocm.config;
 
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 import com.nineone.nocm.domain.User;
 import com.nineone.nocm.repository.UserAuthoritiesRepository;
 
+@Slf4j
 @Aspect
 @Component
 public class AopConfig {
@@ -22,32 +24,36 @@ public class AopConfig {
     private UserAuthoritiesRepository authoritiesRepository;
 
     @Pointcut("execution(* com.nineone.nocm.controller.api.UserApiController.getSessionUser(..))")
-    public void getSessionUser(){}
+    public void getSessionUser() {
+    }
 
     @Pointcut("execution(* com.nineone.nocm.controller.api.UserApiController.userInfo(..))")
-    public void userInfo(){}
+    public void userInfo() {
+    }
 
     @Pointcut("execution(* com.nineone.nocm.controller.api.UserApiController.rolesUserList(..))")
-    public void roleUserList(){}
+    public void roleUserList() {
+    }
 
     @Around("roleUserList()")
-    public Object checkUserAdmin(ProceedingJoinPoint joinPoint) throws Throwable{
+    public Object checkUserAdmin(ProceedingJoinPoint joinPoint) throws Throwable {
         User user = (User) joinPoint.getArgs()[0];
         List<String> roles = authoritiesRepository.getUserRoles(user.getEmail());
 
-        if(roles.contains("ROLE_ROOT") || roles.contains("ROLE_ADMIN")) {
+        if (roles.contains("ROLE_ROOT") || roles.contains("ROLE_ADMIN")) {
             return joinPoint.proceed();
-        }
-        else {
-            return new ResponseEntity<>("{}",HttpStatus.BAD_REQUEST);
+        } else {
+            return new ResponseEntity<>("{}", HttpStatus.BAD_REQUEST);
         }
     }
 
     @Around("userInfo()||getSessionUser()")
-    public Object CheckUserRole(ProceedingJoinPoint joinPoint) throws Throwable{
-        User user = (User)joinPoint.getArgs()[0];
+    public Object CheckUserRole(ProceedingJoinPoint joinPoint) throws Throwable {
+        if (joinPoint.getArgs()[0] == null){
+            return joinPoint.proceed();
+        }
+        User user = (User) joinPoint.getArgs()[0];
         user.setRoles(authoritiesRepository.getUserRoles(user.getEmail()));
-
         return joinPoint.proceed();
     }
 }

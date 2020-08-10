@@ -14,6 +14,8 @@ import VideoChat from "../components/VideoChat";
 import CopyRight from "../views/util/CopyRight";
 import UserInfo from "../views/user/UserInfo";
 import AppInfo from "../views/main/AppInfo";
+import axios from 'axios'
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -37,6 +39,19 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home,
+    beforeEnter: async function (to, from, next) {
+      let user
+      await axios.get('/api/user/info')
+        .then(res => {
+          user = res.data
+          console.log(user)
+        })
+      if (user == null) {
+        next()
+      } else {
+        next('/main')
+      }
+    },
     props: true
   },
   {

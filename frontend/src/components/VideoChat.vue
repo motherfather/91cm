@@ -20,9 +20,6 @@
     },
     created() {
       window.io = io
-      this.$eventBus.$on(command => {
-
-      })
     },
     mounted() {
       $('.nav-toggle').click()
