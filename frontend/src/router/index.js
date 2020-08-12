@@ -39,18 +39,19 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home,
-    beforeEnter: async function (to, from, next) {
+    // 로그인한 유저가 다시 로그인 페이지로 가려고 할때 main으로 리다이렉션 시키는 코드
+    // 좋은 코드는 아닌것 같기 때문 더 좋은 코드가 생각나면 변경
+    beforeEnter: function (to, from, next) {
       let user
-      await axios.get('/api/user/info')
+      axios.get('/api/user/info')
         .then(res => {
           user = res.data
-          console.log(user)
+          if (user == 'undefined') {
+            next()
+          } else {
+            next('/main')
+          }
         })
-      if (user == null) {
-        next()
-      } else {
-        next('/main')
-      }
     },
     props: true
   },

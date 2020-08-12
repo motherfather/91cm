@@ -96,7 +96,7 @@ public class UserApiController {
     @RequestMapping(value = "/info")
     public ResponseEntity<?> userInfo(@Socialuser User user) {
         if (user == null){
-            return new ResponseEntity<>(null,HttpStatus.ACCEPTED);
+            return new ResponseEntity<>("undefined",HttpStatus.ACCEPTED);
         }
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
