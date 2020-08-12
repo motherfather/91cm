@@ -1,0 +1,18 @@
+version: "1"
+services:
+  91cm_db:
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: nocm
+      MYSQL_ROOT_PASSWORD: 91soft(@)
+      MYSQL_ROOT_HOST: '%'
+    ports:
+      - 3306:3306
+
+
+  91cm_app:
+    build: .
+    ports:
+      - 9999:9191
+    depends_on:
+      - 91cm_db
