@@ -1,14 +1,16 @@
-version: "1"
+version: "2.1"
 services:
   91cm_db:
     image: mysql:5.7
     environment:
       MYSQL_DATABASE: nocm
-      MYSQL_ROOT_PASSWORD: 91soft(@)
+      MYSQL_ROOT_PASSWORD: 91soft
       MYSQL_ROOT_HOST: '%'
     ports:
-      - 3306:3306
-
+      - 3307:3306
+    volumes:
+      - 91cmDB:/var/lib/mysql
+      - /root/workspace/db_scheduler:/db_backup
 
   91cm_app:
     build: .
