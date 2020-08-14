@@ -19,4 +19,4 @@ WORKDIR $HOME/91cm
 
 CMD ["./gradlew","bootRun"]
 
-EXPOSE 9191
+#EXPOSE 9191
