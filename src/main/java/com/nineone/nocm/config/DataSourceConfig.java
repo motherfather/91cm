@@ -23,7 +23,7 @@ public class DataSourceConfig {
         config.setMaximumPoolSize(10);
         config.setMinimumIdle(5);
         config.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        config.setJdbcUrl("jdbc:mysql://91cm_db:3306/nocm?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&verifyServerCertificate=false&useSSL=false");
+        config.setJdbcUrl("jdbc:mysql://localhost:3306/nocm?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&verifyServerCertificate=false&useSSL=false");
         config.addDataSourceProperty("user", "91cm");
         config.addDataSourceProperty("password", "91cm");
 		return config;
