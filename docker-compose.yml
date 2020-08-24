@@ -3,7 +3,7 @@ services:
   91cm_db:
     image: mysql:5.7
     restart: always
-    command: --default-authentication-plugin=mysql_native_password
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8 --collation-server=utf8_general_ci --lower_case_table_names=1
     environment:
       MYSQL_DATABASE: nocm
       MYSQL_ROOT_PASSWORD: 91soft(@)
@@ -11,9 +11,9 @@ services:
       MYSQL_USER: 91cm
       MYSQL_PASSWORD: 91cm
     ports:
-      - 3306:3306
-    volume_driver: local
+      - 3307:3306
     volumes:
+      - mysqlConfig:/etc/mysql
       - 91cmDB:/var/lib/mysql
       - /root/workspace/db_scheduler:/db_backup
 
@@ -25,5 +25,7 @@ services:
       - 91cm_db
 
 volumes:
+  mysqlConfig:
+    driver: local
   91cmDB:
     driver: local
