@@ -100,7 +100,7 @@ public class MessageApiController {
         googleMailSender.MailSend(messageMap.get("channelName") + " 채널에서 새로운 메시지가 왔습니다."
                 , messageMap.get("toUser"), messageMap.get("channelName") + " 채널에서 " +
                         messageMap.get("fromUser") + "님이 메시지를 보냈습니다. 확인해주세요." +
-                        "\n 91cm로 이동 : http://91cm.nineonesoft.com:9191/");
+                        "\n 91cm로 이동 : https://91cm.nineonesoft.com:9192/");
         return true;
     }
 
