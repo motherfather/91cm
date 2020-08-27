@@ -130,7 +130,7 @@ let messageMixin = {
         target_lang: 'en'
       }).then(res=>{
         let translateText=res.data
-        this.message.content += +translateText
+        this.message.content += "\n"+translateText
       }).catch(error =>{
         console.error(error)
       })

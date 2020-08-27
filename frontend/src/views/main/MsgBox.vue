@@ -185,11 +185,9 @@
               // 같은 url을 두개 넣으면 에러
               result = "<a class='msgbox-color' href='" + contentItem + "' target='_blank'>" +
                 contentItem + "</a>"
-                console.log(contentItem,'contentItem')
               let replaceItem = contentItem.replace('?', '\\?')
               let replaceRegExp = new RegExp(replaceItem, "g");
               content = content.replace(replaceRegExp, result)
-
             });
             return content
           } else {
