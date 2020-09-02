@@ -62,7 +62,7 @@
             <!-- Already Registered -->
             <br><br><br>
             <div class="text-center w-100">
-              <p class="text-muted font-weight-bold">회원가입하기 <a href="/formSignUp" class="text-primary ml-2">Sign Up</a>
+              <p class="text-muted font-weight-bold">회원가입하기 <a class="text-primary ml-2" @click="$router.replace('/formSignUp')">Sign Up</a>
               </p>
             </div>
           </div>

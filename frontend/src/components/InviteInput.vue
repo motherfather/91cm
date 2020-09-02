@@ -49,47 +49,46 @@
       </v-col>
     </v-row>
     <div class="verti-align">
-      <v-btn class="mx-2" fab dark large color="cyan" 
-                v-if="$store.state.isInviteMode"  @click="inviteChannel($event)">
-            <i class="im im-paperplane"></i>
+      <v-btn class="mx-2" fab dark large color="cyan"
+             v-if="$store.state.isInviteMode" @click="inviteChannel($event)">
+        <i class="im im-paperplane"></i>
       </v-btn>
     </div>
   </div>
 </template>
 
 <script>
-  import InviteService from "../service/inviteService";
-  import {mapGetters} from "vuex";
+import {mapGetters} from "vuex";
 
-  export default {
-    name: "InviteInput",
-    computed: {
-      ...mapGetters({
-        userList: 'getUserList',
-        inviteUserList: 'getInviteUserList',
-      })
-    },
-    data() {
-      return {
-        friends: [],
-      }
-    },
-    async created() {
-      console.log('create...')
-      await this.$store.dispatch('inviteUserList')
-    },
-    mounted() {
-      this.friends = []
-    },
-    methods: {
-      remove(item) {
-        const index = this.friends.indexOf(item.email);
-        if (index >= 0) this.friends.splice(index, 1);
-      }
+export default {
+  name: "InviteInput",
+  computed: {
+    ...mapGetters({
+      userList: 'getUserList',
+      inviteUserList: 'getInviteUserList',
+    })
+  },
+  data() {
+    return {
+      friends: [],
+    }
+  },
+  async created() {
+    console.log('create...')
+    await this.$store.dispatch('inviteUserList')
+  },
+  mounted() {
+    this.friends = []
+  },
+  methods: {
+    remove(item) {
+      const index = this.friends.indexOf(item.email);
+      if (index >= 0) this.friends.splice(index, 1);
     }
   }
+}
 </script>
 
 <style scoped>
-  
+
 </style>

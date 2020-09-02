@@ -2,8 +2,6 @@ import axios from "axios";
 
 export default {
   // 현재 채널의 모든 taskList 가져오기
-
-
   loadChannelFiles: async function (context, {fileCursorPoint,isFileDrawer}) {
     await axios.post('/api/file/get/files', fileCursorPoint).then(res => {
       let files = res.data

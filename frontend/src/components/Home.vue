@@ -5,28 +5,25 @@
 </template>
 
 <script>
-  import Login from '../views/Login'
+import Login from '../views/Login'
 
-  export default {
-    name: 'Home',
-    components: {
-      Login
-    },
-    data() {
-      return {}
-    },
-    mounted() {
-      if (this.$route.params.msg) {
-        if (this.$route.params.msg.show) {
-          this.$_alert(this.$route.params.msg.message)
-        }
+export default {
+  name: 'Home',
+  components: {
+    Login
+  },
+  mounted() {
+    if (this.$route.params.msg) {
+      if (this.$route.params.msg.show) {
+        this.$_alert(this.$route.params.msg.message)
       }
-      if (this.$route.query.msg) {
-        if (this.$route.query.msg.show) {
-          this.$_alert(this.$route.query.msg.message)
-        }
+    }
+    if (this.$route.query.msg) {
+      if (this.$route.query.msg.show) {
+        this.$_alert(this.$route.query.msg.message)
       }
-    },
+    }
+  },
 
-  }
+}
 </script>

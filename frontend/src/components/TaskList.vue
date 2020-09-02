@@ -8,7 +8,7 @@
       >
         <div class="card-header">
           <div v-if="!edit">
-            <h3>{{taskList.name}}</h3>
+            <h3>{{ taskList.name }}</h3>
             <div class="card-header-right">
               <ul class="list-unstyled card-option">
                 <!-- <i class="ik ik-chevron-up"></i> -->
@@ -64,7 +64,8 @@
             <div class="dd-handle" v-if="index != editSelector">
               <div>
                 <div style="display: flex; align-items: center;">
-                  <span class="small text-muted" v-if="task.start_date">{{getDateFormat(task.start_date)}} ~ {{getDateFormat(task.end_date)}}</span>
+                  <span class="small text-muted"
+                        v-if="task.start_date">{{ getDateFormat(task.start_date) }} ~ {{ getDateFormat(task.end_date) }}</span>
                   <div class="dropdown d-inline-block" style="position: absolute;right: 0;">
                     <a class="nav-link dropdown-toggle" href="#" id="moreDropdown" role="button" data-toggle="dropdown"
                        aria-haspopup="true" aria-expanded="false"><i class="ik ik-more-horizontal"></i></a>
@@ -80,10 +81,12 @@
 
                 </div>
 
-                <p id="content" style="margin:0">{{task.content}}</p>
+                <p id="content" style="margin:0">{{ task.content }}</p>
                 <footer style="display: flex;justify-content: flex-end;">
-                  <small>created by {{channelUsers.find(user => user.email ==
-                    task.member_email).name}}</small>
+                  <small>created by {{
+                      channelUsers.find(user => user.email ==
+                        task.member_email).name
+                    }}</small>
                   <!-- 채널 옮길때마다 아래 name에서 error 일어나는 것 같음 -->
                 </footer>
               </div>
@@ -105,272 +108,272 @@
 </template>
 
 <script>
-  import draggable from 'vuedraggable'
-  import DatePicker from 'vue2-datepicker'
-  import 'vue2-datepicker/index.css'
-  import VSwatches from 'vue-swatches'
-  import 'vue-swatches/dist/vue-swatches.css'
-  import {mapGetters} from "vuex";
-  import TaskEdit from "../views/todolist/TaskEdit";
+import draggable from 'vuedraggable'
+import DatePicker from 'vue2-datepicker'
+import 'vue2-datepicker/index.css'
+import VSwatches from 'vue-swatches'
+import 'vue-swatches/dist/vue-swatches.css'
+import {mapGetters} from "vuex";
+import TaskEdit from "../views/todolist/TaskEdit";
 
-  export default {
-    name: 'TaskList',
-    props: ["taskList"],
-    computed: {
-      ...mapGetters({
-        channelUsers: 'getChannelUsers',
-        currentChannel: 'getCurrentChannel',
-        isSmallWidth: 'getIsSmallWidth'
-      }),
-      getTasks: function () {
-        return this.taskList.tasks
-      },
-      disableCheck: function () {
-        if (this.$store.state.isSmallWidth || this.$store.state.isCreateListActive) {
-          return true
-        } else {
-          return false
-        }
-      }
+export default {
+  name: 'TaskList',
+  props: ["taskList"],
+  computed: {
+    ...mapGetters({
+      channelUsers: 'getChannelUsers',
+      currentChannel: 'getCurrentChannel',
+      isSmallWidth: 'getIsSmallWidth'
+    }),
+    getTasks: function () {
+      return this.taskList.tasks
     },
-    watch: {
-      getTasks: function (newVal, oldVal) {
-        this.taskList.tasks.forEach(task => {
-          task.position = this.taskList.tasks.indexOf(task)
+    disableCheck: function () {
+      if (this.$store.state.isSmallWidth || this.$store.state.isCreateListActive) {
+        return true
+      } else {
+        return false
+      }
+    }
+  },
+  watch: {
+    getTasks: function (newVal, oldVal) {
+      this.taskList.tasks.forEach(task => {
+        task.position = this.taskList.tasks.indexOf(task)
+      })
+    }
+  },
+  components: {
+    TaskEdit,
+    draggable,
+    DatePicker,
+    VSwatches
+  },
+  data() {
+    return {
+      color: '#A463BF',
+      date: [],
+      updateTask: {
+        taskOldIndex: null,
+        taskNewIndex: null,
+        tasklistOldId: null,
+        tasklistNewId: null,
+        taskId: null
+      },
+      editSelector: -1,
+      taskListName: '',
+      create: false,
+      edit: false,
+      editTaskListNameVal: ''
+    }
+  },
+  methods: {
+    closeTaskList: function () {
+      this.$emit('closeTaskList')
+    },
+    taskEventHandler: function ({added, moved, removed}) {
+      let updateTaskItem = {
+        taskOldIndex: null,
+        taskNewIndex: null,
+        tasklistOldId: null,
+        tasklistNewId: null,
+        tasklistId: null,
+        taskId: null
+      }
+      if (added) {
+        added.element.tasklist_id = this.taskList.id
+      }
+      if (moved) {
+        updateTaskItem.taskNewIndex = moved.newIndex
+        updateTaskItem.taskOldIndex = moved.oldIndex
+        updateTaskItem.tasklistId = this.taskList.id
+        updateTaskItem.taskId = moved.element.id
+        this.$http.post('/api/task/update/position', updateTaskItem)
+          .then(res => {
+            this.$store.state.stompClient.send('/sub/todo/' + this.currentChannel.id, {}, {typename: 'taskUpdate'})
+          }).catch(error => {
+          console.error(error)
+        })
+      }
+      if (removed) {
+        updateTaskItem.taskOldIndex = removed.oldIndex
+        updateTaskItem.taskNewIndex = removed.element.position
+        updateTaskItem.tasklistOldId = this.taskList.id
+        updateTaskItem.tasklistNewId = removed.element.tasklist_id
+        updateTaskItem.taskId = removed.element.id
+        this.$http.post('/api/task/update/position', updateTaskItem)
+          .then(res => {
+            this.$store.state.stompClient.send('/sub/todo/' + this.currentChannel.id, {}, {typename: 'taskUpdate'})
+          }).catch(error => {
+          console.error(error)
         })
       }
     },
-    components: {
-      TaskEdit,
-      draggable,
-      DatePicker,
-      VSwatches
+    checkTask: function (evt) {
+      evt.draggedContext.element.tasklist_id = this.taskList.id
+      evt.draggedContext.element.position = evt.draggedContext.index
     },
-    data() {
-      return {
-        color: '#A463BF',
-        date: [],
-        updateTask: {
-          taskOldIndex: null,
-          taskNewIndex: null,
-          tasklistOldId: null,
-          tasklistNewId: null,
-          taskId: null
-        },
-        editSelector: -1,
-        taskListName: '',
-        create: false,
-        edit: false,
-        editTaskListNameVal:''
-      }
+    deleteTaskList: function () {
+      this.$http.post('/api/tasklist/delete', {
+        id: this.taskList.id,
+        position: this.taskList.position,
+        channel_id: this.currentChannel.id
+      })
+        .then(res => {
+          this.$eventBus.$emit('deleteTaskList', this.taskList)
+          this.$store.state.stompClient.send('/sub/todo/' + this.currentChannel.id, {}, {typename: 'taskUpdate'})
+        })
+        .catch(error => {
+
+        })
     },
-    methods: {
-      closeTaskList: function () {
-        this.$emit('closeTaskList')
-      },
-      taskEventHandler: function ({added, moved, removed}) {
-        let updateTaskItem = {
-          taskOldIndex: null,
-          taskNewIndex: null,
-          tasklistOldId: null,
-          tasklistNewId: null,
-          tasklistId: null,
-          taskId: null
-        }
-        if (added) {
-          added.element.tasklist_id = this.taskList.id
-        }
-        if (moved) {
-          updateTaskItem.taskNewIndex = moved.newIndex
-          updateTaskItem.taskOldIndex = moved.oldIndex
-          updateTaskItem.tasklistId = this.taskList.id
-          updateTaskItem.taskId = moved.element.id
-          this.$http.post('/api/task/update/position', updateTaskItem)
-            .then(res => {
-              this.$store.state.stompClient.send('/sub/todo/' + this.currentChannel.id, {}, {typename: 'taskUpdate'})
-            }).catch(error => {
-            console.error(error)
-          })
-        }
-        if (removed) {
-          updateTaskItem.taskOldIndex = removed.oldIndex
-          updateTaskItem.taskNewIndex = removed.element.position
-          updateTaskItem.tasklistOldId = this.taskList.id
-          updateTaskItem.tasklistNewId = removed.element.tasklist_id
-          updateTaskItem.taskId = removed.element.id
-          this.$http.post('/api/task/update/position', updateTaskItem)
-            .then(res => {
-              this.$store.state.stompClient.send('/sub/todo/' + this.currentChannel.id, {}, {typename: 'taskUpdate'})
-            }).catch(error => {
-            console.error(error)
-          })
-        }
-      },
-      checkTask: function (evt) {
-        evt.draggedContext.element.tasklist_id = this.taskList.id
-        evt.draggedContext.element.position = evt.draggedContext.index
-      },
-      deleteTaskList: function () {
-        this.$http.post('/api/tasklist/delete', {
-          id: this.taskList.id,
-          position: this.taskList.position,
-          channel_id: this.currentChannel.id
+    editToggle: function () {
+      this.editTaskListNameVal = JSON.parse(JSON.stringify(this.taskList.name))
+      this.edit = !this.edit
+    },
+    editTaskListName: function () {
+      console.log('?1')
+      this.$http.post('/api/tasklist/update/name', {
+        id: this.taskList.id,
+        name: this.editTaskListNameVal
+      }).then(res => {
+        this.taskList.name = JSON.parse(JSON.stringify(this.editTaskListNameVal))
+        this.editTaskListNameVal = ''
+        this.$store.state.stompClient.send('/sub/todo/' + this.currentChannel.id, {}, {typename: 'taskUpdate'})
+        this.$store.commit('setCreateListActive', false)
+        this.editToggle()
+      }).catch(error => {
+        console.error(error)
+      })
+    },
+    editTask: function (task, state) {
+      task.state = state
+      this.$http.post('/api/task/update/content', task)
+        .then(res => {
+          this.$store.state.stompClient.send('/sub/todo/' + this.currentChannel.id, {}, {typename: 'taskUpdate'})
+        }).catch(error => {
+        console.error(error)
+      })
+    },
+    deleteTask: function (task, index) {
+      // 현저 유저와 작성자가 같은지 비교해서 삭제할 수 있도록 변경 필요
+      this.$http.post('/api/task/delete', task)
+        .then(res => {
+          this.$store.state.stompClient.send('/sub/todo/' + this.currentChannel.id, {}, {typename: 'taskUpdate'})
+          this.taskList.tasks.splice(index, 1)
+        }).catch(error => {
+        console.error(error)
+      })
+    },
+    createFormToggle: function () {
+      this.create = !this.create
+      this.taskContent = ''
+    },
+    editFormToggle: function (index) {
+      this.editSelector = index
+    },
+    setTaskListName: function () {
+      console.log('??!!')
+      if (this.taskListName == '' || this.taskListName == null) {
+        this.$_alert('내용을 입력해주세요.')
+      } else {
+        this.taskList.channel_id = this.currentChannel.id
+        this.taskList.name = this.taskListName
+        this.$http.post('/api/tasklist/insert', JSON.stringify(this.taskList), {
+          headers: {
+            'Content-Type': 'application/json'
+          }
         })
           .then(res => {
-            this.$eventBus.$emit('deleteTaskList', this.taskList)
+            this.taskList.id = res.data.id
             this.$store.state.stompClient.send('/sub/todo/' + this.currentChannel.id, {}, {typename: 'taskUpdate'})
+            this.$store.commit('setCreateListActive', false)
           })
           .catch(error => {
-
-          })
-      },
-      editToggle: function () {
-        this.editTaskListNameVal = JSON.parse(JSON.stringify(this.taskList.name))
-        this.edit = !this.edit
-      },
-      editTaskListName: function () {
-        console.log('?1')
-        this.$http.post('/api/tasklist/update/name', {
-          id: this.taskList.id,
-          name: this.editTaskListNameVal
-        }).then(res => {
-          this.taskList.name = JSON.parse(JSON.stringify(this.editTaskListNameVal))
-          this.editTaskListNameVal = ''
-          this.$store.state.stompClient.send('/sub/todo/' + this.currentChannel.id, {}, {typename: 'taskUpdate'})
-          this.$store.commit('setCreateListActive', false)
-          this.editToggle()
-        }).catch(error => {
-          console.error(error)
-        })
-      },
-      editTask: function (task, state) {
-        task.state = state
-        this.$http.post('/api/task/update/content', task)
-          .then(res => {
-            this.$store.state.stompClient.send('/sub/todo/' + this.currentChannel.id, {}, {typename: 'taskUpdate'})
-          }).catch(error => {
-          console.error(error)
-        })
-      },
-      deleteTask: function (task, index) {
-        // 현저 유저와 작성자가 같은지 비교해서 삭제할 수 있도록 변경 필요
-        this.$http.post('/api/task/delete', task)
-          .then(res => {
-            this.$store.state.stompClient.send('/sub/todo/' + this.currentChannel.id, {}, {typename: 'taskUpdate'})
-            this.taskList.tasks.splice(index, 1)
-          }).catch(error => {
-          console.error(error)
-        })
-      },
-      createFormToggle: function () {
-        this.create = !this.create
-        this.taskContent = ''
-      },
-      editFormToggle: function (index) {
-        this.editSelector = index
-      },
-      setTaskListName: function () {
-        console.log('??!!')
-        if (this.taskListName == '' || this.taskListName == null) {
-          this.$_alert('내용을 입력해주세요.')
-        } else {
-          this.taskList.channel_id = this.currentChannel.id
-          this.taskList.name = this.taskListName
-          this.$http.post('/api/tasklist/insert', JSON.stringify(this.taskList), {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          })
-            .then(res => {
-              this.taskList.id = res.data.id
-              this.$store.state.stompClient.send('/sub/todo/' + this.currentChannel.id, {}, {typename: 'taskUpdate'})
-              this.$store.commit('setCreateListActive', false)
-            })
-            .catch(error => {
-              console.error(error)
-            })
-        }
-      },
-      getDateFormat: function (dateData) {
-        const date = new Date(dateData)
-        let dateToString = ''
-        dateToString = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
-        return dateToString
-      },
-      msgBox: async function () {
-        await this.$bvModal.msgBoxConfirm("정말로 이 TaskList를 삭제하시겠습니끼?", {
-          title: '확인',
-          okTitle: '확인',
-          okVariant: 'danger',
-          buttonSize: 'sm',
-          cancelTitle: '취소'
-        })
-          .then(value => {
-            if (value) {
-              this.deleteTaskList()
-            }
+            console.error(error)
           })
       }
-
+    },
+    getDateFormat: function (dateData) {
+      const date = new Date(dateData)
+      let dateToString = ''
+      dateToString = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
+      return dateToString
+    },
+    msgBox: async function () {
+      await this.$bvModal.msgBoxConfirm("정말로 이 TaskList를 삭제하시겠습니끼?", {
+        title: '확인',
+        okTitle: '확인',
+        okVariant: 'danger',
+        buttonSize: 'sm',
+        cancelTitle: '취소'
+      })
+        .then(value => {
+          if (value) {
+            this.deleteTaskList()
+          }
+        })
     }
+
   }
+}
 </script>
 <style scoped>
 
-  .v-application ol {
-    padding: 0px !important;
-  }
+.v-application ol {
+  padding: 0px !important;
+}
 
-  .task-list-enter-active, .task-list-leave-active {
-    transition: all 1s;
-  }
+.task-list-enter-active, .task-list-leave-active {
+  transition: all 1s;
+}
 
-  .task-list-enter, .task-list-leave-to {
-    opacity: 0;
-    transform: translateX(50px);
-  }
+.task-list-enter, .task-list-leave-to {
+  opacity: 0;
+  transform: translateX(50px);
+}
 
-  .task-list-move {
-    transition: transform 1s;
-  }
+.task-list-move {
+  transition: transform 1s;
+}
 
-  i {
-    margin-left: 10px;
-  }
+i {
+  margin-left: 10px;
+}
 
-  .im-pencil {
-    opacity: 0.3;
-  }
+.im-pencil {
+  opacity: 0.3;
+}
 
-  .im-trash-can {
-    opacity: 0.3;
-  }
+.im-trash-can {
+  opacity: 0.3;
+}
 
-  .im-pencil:hover {
-    opacity: 1;
-    color: white;
-  }
+.im-pencil:hover {
+  opacity: 1;
+  color: white;
+}
 
-  .im-trash-can:hover {
-    opacity: 1;
-    color: red;
-  }
+.im-trash-can:hover {
+  opacity: 1;
+  color: red;
+}
 
-  #content {
-    overflow: hidden;
-    word-wrap: break-word;
-  }
+#content {
+  overflow: hidden;
+  word-wrap: break-word;
+}
 
-  .task-color {
-    width: 5px;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
+.task-color {
+  width: 5px;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
 
-  .dd-handle {
-    overflow: visible;
-  }
+.dd-handle {
+  overflow: visible;
+}
 
 </style>

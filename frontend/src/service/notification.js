@@ -7,8 +7,9 @@ class NotificationClass {
       return;
     })
   }
+
   sendNotification(isfocus, data) {
-    if(!isfocus && data.message_type!='action') {
+    if (!isfocus && data.message_type != 'action') {
       let contents = data.content == null ? "첨부파일" : CommonClass.replacemsgForPreview(data.content)
       let options = {
         body: data.user.name + ' : ' + contents

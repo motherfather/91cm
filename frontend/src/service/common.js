@@ -1,17 +1,6 @@
 import axios from 'axios'
-class CommonClass {
-  
-  // p태그 빼면 사용 안하게 될 것
-  // replacemsg(originContent) {
-  //   if (originContent == null){
-  //     return
-  //   }
-  //   let content = ''
-  //   content = originContent.replace(/&lt;p&gt;/gim, '<p>')
-  //   content = content.replace(/&lt;\/p&gt;/gim, '</p>')
-  //   return content
-  // }
 
+class CommonClass {
   formatBytes(bytes, decimals = 2) {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -21,25 +10,12 @@ class CommonClass {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   }
 
-  // p태그 빼면 사용 안하게 될 것
-  // replaceErrorMsg(originContent) {
-  //   let array = originContent.split("\n")
-  //   let content = ''
-  //   for (let i in array) {
-  //     content += '<p>' + array[i] + '</p>'
-  //   }
-  //   return content.replace(/ /gi, '&nbsp;')
-  // }
-
   replacemsgForPreview(originContent) {
     let array = originContent.split("\n")
     let content = ''
     for (let i in array) {
       content += array[i] + ' '
     }
-    // p태그 빼면 사용 안하게 될 것
-    // content = content.replace('&lt;/p&gt;', '')
-    // content = content.replace('&lt;p&gt;', '')
     return content
   }
 
@@ -73,8 +49,8 @@ class CommonClass {
       })
   }
 
-  checkFileType(file, option='thumb') {
-    if(file!==undefined){
+  checkFileType(file, option = 'thumb') {
+    if (file !== undefined) {
       let type = file.extension
       type = type.toLowerCase().trim()
       switch (type) {
@@ -82,36 +58,36 @@ class CommonClass {
         case ('jpg'):
         case ('jpeg'):
         case ('gif'):
-          if (option == 'origin'){
-            return "/api/file/download/"+ file.server_name
+          if (option == 'origin') {
+            return "/api/file/download/" + file.server_name
           }
           //download뒤에 thumb인지 origianl인지 구분 api 만들기
           return "/api/file/download/thumb" + file.server_name
         case ('zip'):
         case ('7z'):
         case ('tar'):
-          if(option == 'tiles'){
+          if (option == 'tiles') {
             return require('@/assets/images/fileIcon/zip-new.png')
-          }else{
+          } else {
             return require('@/assets/images/fileIcon/zip_icon.png')
           }
         case 'pdf':
-          if(option == 'tiles'){
+          if (option == 'tiles') {
             return require('@/assets/images/fileIcon/pdf-new.png')
-          }else{
+          } else {
             return require('@/assets/images/fileIcon/pdf_icon.png')
           }
-  
+
         case 'txt':
-          if(option == 'tiles'){
-            return require('@/assets/images/fileIcon/txt-new.png')  
-          }else{
+          if (option == 'tiles') {
+            return require('@/assets/images/fileIcon/txt-new.png')
+          } else {
             return require('@/assets/images/fileIcon/txt_icon.png')
           }
         default:
-          if(option == 'tiles'){
-            return require('@/assets/images/fileIcon/file-new.png')  
-          }else{
+          if (option == 'tiles') {
+            return require('@/assets/images/fileIcon/file-new.png')
+          } else {
             return require('@/assets/images/fileIcon/file_icon.png')
           }
       }

@@ -132,14 +132,13 @@
       checkPhone(){
         if(this.phone!=''){
           if(this.phoneValidator()){
-            console.log('?')
             this.phoneCheck = true
             this.phoneAlert = ''
           }else{
             this.phoneCheck = false
-            this.phoneAlert = '핸드폰 번호가 형식에 맞지 않습니다' 
+            this.phoneAlert = '핸드폰 번호가 형식에 맞지 않습니다'
           }
-        }        
+        }
       },
       emailDubleCheck(){
         if(this.emailValidator()){
