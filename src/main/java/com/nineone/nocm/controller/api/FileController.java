@@ -53,6 +53,10 @@ public class FileController {
     public ResponseEntity<?> uploadFile(@RequestParam("files") MultipartFile[] files,
                                         @RequestParam("channel_id") int channel_id,
                                         @RequestParam("sender") String sender, @Socialuser User user) {
+        for(MultipartFile file : files){
+            log.info(file.getName());
+            log.info(file.getContentType());
+        }
         Message message = Message.builder().channel_id(channel_id)
                 .sender(sender)
                 .message_type("file")
@@ -90,6 +94,7 @@ public class FileController {
     @GetMapping("/download/{fileName}")
     public ResponseEntity<Resource> downloadFile(@PathVariable(value = "fileName") String fileName) {
         // id를 통해서 UUID로 인코딩된 file을 가져오는 로직
+        log.info(fileName);
         Resource resource = fileStorageService.loadFileAsResource(fileName);
         String contentType = null;
         try {

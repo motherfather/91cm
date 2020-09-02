@@ -84,7 +84,7 @@ public class FileStorageService {
 
     public Path checkExtension(MultipartFile file,ContentsFile contentsFile) {
     	Path path;
-    	switch (contentsFile.getExtension()) {
+    	switch (contentsFile.getExtension().toLowerCase()) {
 		case "zip":
 		case "7z" :
 		case "tar":
@@ -112,9 +112,7 @@ public class FileStorageService {
 
     public String storeFile(MultipartFile file, ContentsFile contentsFile){
         String fileName = StringUtils.cleanPath(contentsFile.getServer_name()+"."+contentsFile.getExtension());
-
         Path path = checkExtension(file,contentsFile);
-
         try{
             if (fileName.contains("..")){
                 throw new FileStorageException("Sorry! Filename contains invalid path sequenced "+ fileName);
