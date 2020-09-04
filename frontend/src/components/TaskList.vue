@@ -63,30 +63,66 @@
 
             <div class="dd-handle" v-if="index != editSelector">
               <div>
+
                 <div style="display: flex; align-items: center;">
                   <span class="small text-muted"
-                        v-if="task.start_date">{{ getDateFormat(task.start_date) }} ~ {{ getDateFormat(task.end_date) }}</span>
-                  <div class="dropdown d-inline-block" style="position: absolute;right: 0;">
-                    <a class="nav-link dropdown-toggle" href="#" id="moreDropdown" role="button" data-toggle="dropdown"
-                       aria-haspopup="true" aria-expanded="false"><i class="ik ik-more-horizontal"></i></a>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="moreDropdown"
-                         x-placement="bottom-end"
-                         style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-140px, 30px, 0px);">
-                      <a class="dropdown-item" @click="editFormToggle(index)">Edit</a>
-                      <a class="dropdown-item" v-if="task.state" @click="editTask(task,false)">Done</a>
-                      <a class="dropdown-item" v-else @click="editTask(task,true)">Revoke</a>
-                      <a class="dropdown-item" @click="deleteTask(task,index)" style="color:red;">Delete</a>
-                    </div>
-                  </div>
-
+                        v-if="task.start_date">{{ getDateFormat(task.start_date) }} ~ {{
+                      getDateFormat(task.end_date)
+                    }}</span>
+                  <v-row justify="end" align="start" dense>
+                    <v-icon color="green" v-if="!task.state" dense>done</v-icon>
+                  </v-row>
+                  <v-menu offset-y>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn icon v-bind="attrs" v-on="on">
+                        <v-icon style="margin-right: 10px;" dense>more_horiz</v-icon>
+                      </v-btn>
+                    </template>
+                    <v-list>
+                      <v-list-item dense @click="editFormToggle(index)">
+                        <v-list-item-title>Edit</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item dense v-if="task.state" @click="editTask(task,false)">
+                        <v-list-item-title>Done</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item dense v-else @click="editTask(task,true)">
+                        <v-list-item-title>Revoke</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item dense @click="deleteTask(task,index)">
+                        <v-list-item-title style="color: red">Delete</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                  <!--<div class="dropdown d-inline-block" style="position: absolute;right: 0;">-->
+                  <!--<a class="nav-link dropdown-toggle" href="#" id="moreDropdown" role="button" data-toggle="dropdown"-->
+                  <!--aria-haspopup="true" aria-expanded="false"><i class="ik ik-more-horizontal"></i></a>-->
+                  <!--<div class="dropdown-menu dropdown-menu-right" aria-labelledby="moreDropdown"-->
+                  <!--x-placement="bottom-end"-->
+                  <!--style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-140px, 30px, 0px);">-->
+                  <!--<a class="dropdown-item" @click="editFormToggle(index)">Edit</a>-->
+                  <!--<a class="dropdown-item" v-if="task.state" @click="editTask(task,false)">Done</a>-->
+                  <!--<a class="dropdown-item" v-else @click="editTask(task,true)">Revoke</a>-->
+                  <!--<a class="dropdown-item" @click="deleteTask(task,index)" style="color:red;">Delete</a>-->
+                  <!--</div>-->
+                  <!--</div>-->
                 </div>
-
-                <p id="content" style="margin:0">{{ task.content }}</p>
-                <footer style="display: flex;justify-content: flex-end;">
-                  <small>created by {{
-                      channelUsers.find(user => user.email ==
-                        task.member_email).name
-                    }}</small>
+<!--                띄어 쓰기를 위해서 사용 더 좋은 방법이 있다면 변경 바람 (pre는 text font가 이상해짐 )-->
+                <p v-for="text in task.content.split('\n')" id="content" style="margin:0;">{{ text }}</p>
+                <footer>
+                  <v-row dense>
+                    <v-col cols="10">
+                      <small style="display:flex; justify-content: flex-start">
+                        created {{ getDateFormat(task.register_date)}}
+                      </small>
+                    </v-col>
+                    <v-col cols="2">
+                      <small style="display: flex; justify-content: flex-end">
+                        by {{
+                          channelUsers.find(user => user.email ==
+                            task.member_email).name }}
+                      </small>
+                    </v-col>
+                  </v-row>
                   <!-- 채널 옮길때마다 아래 name에서 error 일어나는 것 같음 -->
                 </footer>
               </div>
@@ -295,10 +331,7 @@ export default {
       }
     },
     getDateFormat: function (dateData) {
-      const date = new Date(dateData)
-      let dateToString = ''
-      dateToString = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
-      return dateToString
+      return this.$moment(dateData).format('YYYY-MM-DD')
     },
     msgBox: async function () {
       await this.$bvModal.msgBoxConfirm("정말로 이 TaskList를 삭제하시겠습니끼?", {
