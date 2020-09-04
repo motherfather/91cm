@@ -106,6 +106,9 @@
         this.$store.commit('setCurrentChannel',channel)
         this.confirmChannel(this.event, 'update', channel)
       },
+      channelDelete: function (channel){
+        this.confirmChannel(this.event, 'delete', channel)
+      },
       channelInfo: function(channel){
         this.dialog = true
       },
