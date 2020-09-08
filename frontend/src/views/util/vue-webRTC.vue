@@ -19,8 +19,13 @@
               v-bind:video="item"
               v-bind:key="item.id"
               class="video-item">
-              <video controls autoplay playsinline ref="videos" :muted="item.muted"
-                     :id="item.id" style="max-width:100%;"></video>
+              <div class="video-container">
+                <video controls autoplay playsinline ref="videos" :muted="item.muted"
+                       :id="item.id" style="max-width:100%;"></video>
+                <div class="overlay">
+                  <p>test code</p>
+                </div>
+              </div>
             </v-card>
           </v-card>
         </v-col>
@@ -266,5 +271,17 @@
 </script>
 
 <style scoped>
-
+  .video-container{
+    position: relative;
+  }
+  .video-container video{
+    position: relative;
+    z-index: 0;
+  }
+  .overlay{
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+  }
 </style>
