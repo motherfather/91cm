@@ -13,7 +13,8 @@
     </v-row>
     <v-row justify="center" align="center" no-gutters style="height: 90%;">
       <draggable v-model="videoList" style="display: flex; flex-wrap: wrap; justify-content: center;">
-        <v-col :cols="getVideoCols" v-for="(item,index) in videoList" :key="item.id" style="margin-top: 0px; padding: 5px;">
+        <v-col :cols="getVideoCols" v-for="(item,index) in videoList" :key="item.id"
+               style="margin-top: 0px; padding: 5px;">
           <v-card class="d-inline" flat tile>
             <v-card
               v-bind:video="item"
@@ -35,253 +36,261 @@
 </template>
 
 <script>
-  import RTCMultiConnection from 'rtcmulticonnection';
-  import draggable from "vuedraggable";
+import RTCMultiConnection from 'rtcmulticonnection';
+import draggable from "vuedraggable";
 
-  require('adapterjs');
-  export default {
-    name: "vue-webRTC",
-    components: {
-      RTCMultiConnection,
-      draggable
+require('adapterjs');
+export default {
+  name: "vue-webRTC",
+  components: {
+    RTCMultiConnection,
+    draggable
+  },
+  computed: {
+    getVideoCols: function () {
+      switch (this.videoList.length) {
+        case 1:
+          return 10;
+        case 2:
+          return 6;
+        case 3:
+        case 4:
+          return 5;
+        case 5:
+        case 6:
+          return 4;
+        default:
+          return 3;
+      }
     },
-    computed: {
-      getVideoCols: function () {
-        switch (this.videoList.length) {
-          case 1:
-            return 10;
-          case 2:
-            return 6;
-          case 3:
-          case 4:
-            return 5;
-          case 5:
-          case 6:
-            return 4;
-          default:
-            return 3;
+  },
+  data() {
+    return {
+      rtcmConnection: null,
+      localVideo: null,
+      videoList: [],
+      canvas: null,
+      windowSize: {
+        x: 0,
+        y: 0,
+      },
+    };
+  },
+  props: {
+    iceServer: {
+      type: String,
+      default: 'stun:stun.1.google.com:19302'
+    },
+    roomId: {
+      default: 'public-room'
+    },
+    socketURL: {
+      type: String,
+      default: 'https://rtcmulticonnection.herokuapp.com:443/'
+    },
+    cameraHeight: {
+      type: [Number, String],
+      default: 160
+    },
+    autoplay: {
+      type: Boolean,
+      default: true
+    },
+    screenshotFormat: {
+      type: String,
+      default: 'image/jpeg'
+    },
+    enableAudio: {
+      type: Boolean,
+      default: true
+    },
+    enableVideo: {
+      type: Boolean,
+      default: true
+    },
+    enableLogs: {
+      type: Boolean,
+      default: true
+    },
+  },
+  watch:{
+    videoList: function (){
+      console.log(this.videoList)
+    }
+  },
+  mounted() {
+    let that = this;
+    this.rtcmConnection = new RTCMultiConnection();
+    this.rtcmConnection.socketURL = this.socketURL;
+    this.rtcmConnection.iceServers = [];
+    // this.rtcmConnection.iceServers.push({
+    //   urls: 'stun:stun4.l.google.com:19302'
+    // });
+    this.rtcmConnection.iceServers.push({
+      url: 'turn:ithkoo.com:3478',
+      credential: 'hkoo',
+      username: 'hkoo'
+    });
+
+    // this.rtcmConnection.iceProtocols = {
+    //   udp: true,
+    //   tcp: true
+    // }
+    //this.rtcmConnection.codecs.video = 'H264';
+    //this.rtcmConnection.codecs.audio = 'PCMA/U';
+    // this.rtcmConnection.codecs = {
+    //   audio: 'PCMA/U',
+    //   video: 'H264'
+    // };
+    this.rtcmConnection.autoCreateMediaElement = false;
+    this.rtcmConnection.enableLogs = this.enableLogs;
+    this.rtcmConnection.session = {
+      audio: this.enableAudio,
+      video: this.enableVideo
+    };
+    this.rtcmConnection.sdpConstraints.mandatory = {
+      OfferToReceiveAudio: this.enableAudio,
+      OfferToReceiveVideo: this.enableVideo
+    };
+    let _this = this
+    this.rtcmConnection.onstream = function (stream) {
+      console.log("vue-webRTC",stream)
+      let found = that.videoList.find(video => {
+        return video.id === stream.streamid
+      })
+      if (found === undefined) {
+        let video = {
+          id: stream.streamid,
+          muted: stream.type === 'local',
+          user: stream
+        };
+
+        that.videoList.push(video);
+
+        if (stream.type === 'local') {
+          that.localVideo = video;
         }
-      },
-    },
-    data() {
-      return {
-        rtcmConnection: null,
-        localVideo: null,
-        videoList: [],
-        canvas: null,
-        windowSize: {
-          x: 0,
-          y: 0,
-        },
-      };
-    },
-    props: {
-      iceServer: {
-        type: String,
-        default: 'stun:stun.1.google.com:19302'
-      },
-      roomId: {
-        default: 'public-room'
-      },
-      socketURL: {
-        type: String,
-        default: 'https://rtcmulticonnection.herokuapp.com:443/'
-      },
-      cameraHeight: {
-        type: [Number, String],
-        default: 160
-      },
-      autoplay: {
-        type: Boolean,
-        default: true
-      },
-      screenshotFormat: {
-        type: String,
-        default: 'image/jpeg'
-      },
-      enableAudio: {
-        type: Boolean,
-        default: true
-      },
-      enableVideo: {
-        type: Boolean,
-        default: true
-      },
-      enableLogs: {
-        type: Boolean,
-        default: true
-      },
-    },
-    watch: {},
-    mounted() {
-      let that = this;
-      this.rtcmConnection = new RTCMultiConnection();
-      this.rtcmConnection.socketURL = this.socketURL;
-      this.rtcmConnection.iceServers = [];
-      // this.rtcmConnection.iceServers.push({
-      //   urls: 'stun:stun4.l.google.com:19302'
-      // });
-      this.rtcmConnection.iceServers.push({
-        url: 'turn:ithkoo.com:3478',
-        credential: 'hkoo',
-        username: 'hkoo'
+      }
+
+      setTimeout(function () {
+        for (var i = 0, len = that.$refs.videos.length; i < len; i++) {
+          if (that.$refs.videos[i].id === stream.streamid) {
+            that.$refs.videos[i].srcObject = stream.stream;
+            break;
+          }
+        }
+      }, 2000);
+
+      that.$emit('joined-room', stream.streamid);
+    };
+    this.rtcmConnection.onstreamended = function (stream) {
+      var newList = [];
+      that.videoList.forEach(function (item) {
+        if (item.id !== stream.streamid) {
+          newList.push(item);
+        }
       });
+      that.videoList = newList;
+      that.$emit('left-room', stream.streamid);
+    };
+    this.rtcmConnection.onUserStatusChanged = function (event) {
+      // console.log(event.status)
+    }
+    this.rtcmConnection.onPeerStateChanged = function (state) {
+      // console.log(state)
+    }
+    // this.rtcmConnection.checkPresence(this.roomId, function (isRoomExist, roomid, error) {
+    //   console.log("checkPresence : ",isRoomExist, roomid, error)
+    //   if (isRoomExist === true){
+    //     that.join()
+    //   }else{
+    //     that.join()
+    //   }
+    // });
 
-      // this.rtcmConnection.iceProtocols = {
-      //   udp: true,
-      //   tcp: true
-      // }
-      //this.rtcmConnection.codecs.video = 'H264';
-      //this.rtcmConnection.codecs.audio = 'PCMA/U';
-      // this.rtcmConnection.codecs = {
-      //   audio: 'PCMA/U',
-      //   video: 'H264'
-      // };
-      this.rtcmConnection.autoCreateMediaElement = false;
-      this.rtcmConnection.enableLogs = this.enableLogs;
-      this.rtcmConnection.session = {
-        audio: this.enableAudio,
-        video: this.enableVideo
-      };
-      this.rtcmConnection.sdpConstraints.mandatory = {
-        OfferToReceiveAudio: this.enableAudio,
-        OfferToReceiveVideo: this.enableVideo
-      };
-
-      this.rtcmConnection.onstream = function (stream) {
-        let found = that.videoList.find(video => {
-          return video.id === stream.streamid
-        })
-        if (found === undefined) {
-          let video = {
-            id: stream.streamid,
-            muted: stream.type === 'local'
-          };
-
-          that.videoList.push(video);
-
-          if (stream.type === 'local') {
-            that.localVideo = video;
-          }
+  },
+  methods: {
+    onResize() {
+      this.windowSize = {x: window.innerWidth, y: window.innerHeight}
+    },
+    join() {
+      var that = this;
+      this.rtcmConnection.openOrJoin(this.roomId, function (isRoomExist, roomid) {
+        if (isRoomExist === false && that.rtcmConnection.isInitiator === true) {
+          that.$emit('opened-room', roomid);
         }
 
-        setTimeout(function () {
-          for (var i = 0, len = that.$refs.videos.length; i < len; i++) {
-            if (that.$refs.videos[i].id === stream.streamid) {
-              that.$refs.videos[i].srcObject = stream.stream;
-              break;
-            }
-          }
-        }, 2000);
-
-        that.$emit('joined-room', stream.streamid);
-      };
-      this.rtcmConnection.onstreamended = function (stream) {
-        var newList = [];
-        that.videoList.forEach(function (item) {
-          if (item.id !== stream.streamid) {
-            newList.push(item);
-          }
-        });
-        that.videoList = newList;
-        that.$emit('left-room', stream.streamid);
-      };
-      this.rtcmConnection.onUserStatusChanged = function (event) {
-        // console.log(event.status)
-      }
-      this.rtcmConnection.onPeerStateChanged = function (state) {
-        // console.log(state)
-      }
-      // this.rtcmConnection.checkPresence(this.roomId, function (isRoomExist, roomid, error) {
-      //   console.log("checkPresence : ",isRoomExist, roomid, error)
-      //   if (isRoomExist === true){
-      //     that.join()
-      //   }else{
-      //     that.join()
-      //   }
-      // });
-
+        that.rtcmConnection.socket.on('disconnect', function (message) {
+          // alert(message)
+          that.join()
+        })
+      });
+      console.log(this.rtcmConnection.userid)
     },
-    methods: {
-      onResize() {
-        this.windowSize = {x: window.innerWidth, y: window.innerHeight}
-      },
-      join() {
-        var that = this;
-        this.rtcmConnection.openOrJoin(this.roomId, function (isRoomExist, roomid) {
-          if (isRoomExist === false && that.rtcmConnection.isInitiator === true) {
-            that.$emit('opened-room', roomid);
+    leave() {
+      this.rtcmConnection.attachStreams.forEach(function (localStream) {
+        localStream.stop();
+      });
+      this.videoList = [];
+    },
+    shareScreen() {
+      var that = this;
+      if (navigator.getDisplayMedia || navigator.mediaDevices.getDisplayMedia) {
+        function addStreamStopListener(stream, callback) {
+          var streamEndedEvent = 'ended';
+          if ('oninactive' in stream) {
+            streamEndedEvent = 'inactive';
           }
+          stream.addEventListener(streamEndedEvent, function () {
+            callback();
+            callback = function () {
+            };
+          }, false);
+        }
 
-          that.rtcmConnection.socket.on('disconnect', function (message) {
-            // alert(message)
-            that.join()
-          })
-        });
+        function onGettingSteam(stream) {
+          that.rtcmConnection.addStream(stream);
+          that.$emit('share-started', stream.streamid);
 
-      },
-      leave() {
-        this.rtcmConnection.attachStreams.forEach(function (localStream) {
-          localStream.stop();
-        });
-        this.videoList = [];
-      },
-      shareScreen() {
-        var that = this;
-        if (navigator.getDisplayMedia || navigator.mediaDevices.getDisplayMedia) {
-          function addStreamStopListener(stream, callback) {
-            var streamEndedEvent = 'ended';
-            if ('oninactive' in stream) {
-              streamEndedEvent = 'inactive';
-            }
-            stream.addEventListener(streamEndedEvent, function () {
-              callback();
-              callback = function () {
-              };
-            }, false);
-          }
+          addStreamStopListener(stream, function () {
+            that.rtcmConnection.removeStream(stream.streamid);
+            that.$emit('share-stopped', stream.streamid);
+          });
+        }
 
-          function onGettingSteam(stream) {
-            that.rtcmConnection.addStream(stream);
-            that.$emit('share-started', stream.streamid);
+        function getDisplayMediaError(error) {
+          // console.log('Media error: ' + JSON.stringify(error));
+        }
 
-            addStreamStopListener(stream, function () {
-              that.rtcmConnection.removeStream(stream.streamid);
-              that.$emit('share-stopped', stream.streamid);
-            });
-          }
-
-          function getDisplayMediaError(error) {
-            // console.log('Media error: ' + JSON.stringify(error));
-          }
-
-          if (navigator.mediaDevices.getDisplayMedia) {
-            navigator.mediaDevices.getDisplayMedia({video: true, audio: false}).then(stream => {
-              onGettingSteam(stream);
-            }, getDisplayMediaError).catch(getDisplayMediaError);
-          } else if (navigator.getDisplayMedia) {
-            navigator.getDisplayMedia({video: true}).then(stream => {
-              onGettingSteam(stream);
-            }, getDisplayMediaError).catch(getDisplayMediaError);
-          }
+        if (navigator.mediaDevices.getDisplayMedia) {
+          navigator.mediaDevices.getDisplayMedia({video: true, audio: false}).then(stream => {
+            onGettingSteam(stream);
+          }, getDisplayMediaError).catch(getDisplayMediaError);
+        } else if (navigator.getDisplayMedia) {
+          navigator.getDisplayMedia({video: true}).then(stream => {
+            onGettingSteam(stream);
+          }, getDisplayMediaError).catch(getDisplayMediaError);
         }
       }
     }
-  };
+  }
+};
 </script>
 
 <style scoped>
-  .video-container{
-    position: relative;
-  }
-  .video-container video{
-    position: relative;
-    z-index: 0;
-  }
-  .overlay{
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
-  }
+.video-container {
+  position: relative;
+}
+
+.video-container video {
+  position: relative;
+  z-index: 0;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
 </style>
