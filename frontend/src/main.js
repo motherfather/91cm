@@ -16,7 +16,7 @@ import 'animate.css'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 
-Date.prototype.addDays = function (days) {
+Date.prototype.addDays = function (days) { 
   var date = new Date(this.valueOf());
   date.setDate(date.getDate() + days);
   return date;
